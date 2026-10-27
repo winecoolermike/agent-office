@@ -184,4 +184,4 @@ main{max-width:1400px;margin:0 auto;padding:8px 20px 20px}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
 }
-.feed th, .sheet th { white-space: nowrap; word-break: normal; }
+.md th{white-space:nowrap;overflow-wrap:normal}
