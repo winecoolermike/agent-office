@@ -4,67 +4,66 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="color-scheme" content="dark">
-<meta name="theme-color" content="#12141f">
+<meta name="theme-color" content="#05070a">
 <meta name="robots" content="noindex">
-<title>Agent Office · overnight team status</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 8 8' shape-rendering='crispEdges'%3E%3Crect width='8' height='8' fill='%2312141f'/%3E%3Crect x='2' y='1' width='4' height='3' fill='%239cc8ff'/%3E%3Crect x='1' y='4' width='6' height='3' fill='%233b6fd6'/%3E%3C/svg%3E">
+<title>GROK BOT / CHIEF · agent office</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Crect width='16' height='16' fill='%2305070a'/%3E%3Ccircle cx='8' cy='8' r='4' fill='none' stroke='%2322d3ee' stroke-width='1.5'/%3E%3Ccircle cx='8' cy='8' r='1.5' fill='%23f5b041'/%3E%3C/svg%3E">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
-<header class="top">
-  <div class="brand">
-    <h1>Agent Office</h1>
-    <p class="sub">Jeffrey's overnight agent team, drawn live from its job board</p>
-  </div>
-  <div class="meta" id="meta" aria-live="polite">Loading the board…</div>
+<header class="topbar" id="bar">
+  <span class="brand"><i class="pip"></i>GROK BOT <s>/</s> CHIEF</span>
+  <span class="kv" id="b-night">NIGHT —</span>
+  <span class="kv" id="b-jobs"></span>
+  <span class="kv" id="b-gate"></span>
+  <span class="kv dimk" id="b-built"></span>
+  <span class="grow"></span>
+  <button class="btn amber" id="open-sheet" type="button" aria-controls="drawer">THIS WEEK SHEET ▸</button>
+  <span class="clock" id="clock" aria-label="Current time, Pacific">--:--:-- PT</span>
 </header>
+<div class="banner" id="banner" hidden></div>
 
-<main>
-  <section class="stage-row">
-    <div class="scene-wrap card">
-      <div class="scene-head">
-        <h2>The office floor</h2>
-        <div class="scene-ctl">
-          <span id="clock" class="clock" title="Pacific time"></span>
-          <button id="replay" type="button" class="btn">▶ Replay last night</button>
-        </div>
-      </div>
-      <div id="scene" class="scene" role="img" aria-label="Animated office: each bot acts out its current job status"></div>
-      <p id="caption" class="caption"></p>
-      <ul id="roster" class="roster"></ul>
-      <details class="legend"><summary>What the animations mean</summary>
-        <ul>
-          <li><b>Queued / pending / no job</b>: idles or wanders the floor</li>
-          <li><b>Running</b>: sits at the desk typing, screen lit</li>
-          <li><b>Needs review</b>: walks a folder over to Hal's desk (Hal walks his to the 5:30 Check)</li>
-          <li><b>Approved</b>: celebrates with a green check · <b>Rejected</b>: red X</li>
-          <li><b>Grok Bot</b> walks the floor handing out folders around the plan and hand-off times in the newest run log</li>
-        </ul>
-      </details>
-    </div>
-    <aside class="feed card" aria-label="Live updates">
-      <h2>Live updates</h2>
-      <div id="feed"></div>
-    </aside>
+<main class="grid">
+  <aside class="col left">
+    <section class="p" id="p-brief"><h2>brief</h2><div class="pb" id="brief"></div></section>
+    <section class="p" id="p-sources"><h2>sources</h2><div class="pb" id="sources"></div></section>
+    <section class="p" id="p-rules"><h2>constraints</h2><div class="pb" id="rules"></div></section>
+    <section class="p" id="p-budget"><h2>budget</h2><div class="pb" id="budget"></div></section>
+    <section class="p" id="p-prior"><h2>prior_runs</h2><div class="pb" id="prior"></div></section>
+  </aside>
+
+  <section class="p center" id="p-graph">
+    <h2><span>handoff_graph</span><span class="h2r" id="g-sub"></span></h2>
+    <div class="gwrap" id="gwrap"><svg id="graph" role="img" aria-labelledby="g-title"><title id="g-title">Handoff graph of tonight's jobs</title></svg></div>
+    <div class="stages" id="stages"></div>
+    <div class="legend" id="legend"></div>
   </section>
 
-  <section class="panels">
-    <div class="card" id="budget-card"><h2>Budget</h2><div id="budget"></div></div>
-    <div class="card"><h2>Awaiting Jeffrey</h2><div id="awaiting"></div>
-      <h3>With the 5:30 checker</h3><div id="checker"></div></div>
-    <div class="card"><h2>Tonight's jobs</h2><div id="jobs"></div></div>
-  </section>
+  <aside class="col right">
+    <section class="p" id="p-planner"><h2>planner</h2><div class="pb" id="planner"></div></section>
+    <section class="p" id="p-jobs"><h2>jobs</h2><div class="pb" id="jobs"></div></section>
+    <section class="p" id="p-srcidx"><h2>sources_index</h2><div class="pb" id="srcidx"></div></section>
+  </aside>
 
-  <section class="card outbox" id="outbox-card">
-    <h2>Latest outbox</h2>
-    <div id="outbox"></div>
+  <section class="strip">
+    <section class="p" id="p-runlog"><h2><span>run_log</span><span class="h2r" id="rl-tabs"></span></h2><div class="pb" id="runlog"></div></section>
+    <section class="p" id="p-dispatch"><h2>dispatch</h2><div class="pb" id="dispatch"></div></section>
+    <section class="p gate" id="p-gate"><h2>output / human_gate</h2><div class="pb" id="gate"></div></section>
   </section>
 </main>
 
+<div class="drawer" id="drawer" hidden role="dialog" aria-modal="true" aria-labelledby="dr-title">
+  <div class="dr-back" data-close></div>
+  <div class="dr-panel">
+    <div class="dr-head"><h2 id="dr-title">outbox / this_week</h2><span class="grow"></span><span id="dr-tabs"></span><button class="btn" type="button" data-close>CLOSE ✕</button></div>
+    <div class="dr-body" id="dr-body"></div>
+  </div>
+</div>
+
 <footer class="foot">
-  <p>Personal hobby project. Not financial advice.</p>
-  <p class="dim">Everything here is analysis and team status only: nothing is sent, posted, traded or bought by these bots. Content is auto-scrubbed before publishing.</p>
+  <span>Personal hobby project. Not financial advice.</span>
+  <span class="dimk">Every value on this page is read from the team's job board, then scrubbed before publishing. Missing values say "not recorded".</span>
 </footer>
-<script src="app.js" defer></script>
+<script src="app.js"></script>
 </body>
 </html>

@@ -1,11 +1,11 @@
-/* Agent Office: renders data.json (scrubbed board snapshot). No libraries. */
+/* GROK BOT / CHIEF: mission-control view of the agent board. Renders data.json (scrubbed). No libraries.
+   Honesty rule: every number comes from data.json; missing values render as "not recorded". */
 (() => {
   "use strict";
   const $ = id => document.getElementById(id);
   const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
   const RM = window.matchMedia("(prefers-reduced-motion: reduce)");
   const TZ = "America/Los_Angeles";
-  let D = null, replayTimer = null, replaying = false;
 
   /* ---------------- tiny safe markdown ---------------- */
   function inline(s) {
@@ -48,315 +48,330 @@
     }
     close(); return out.join("");
   }
+  let D = null;
+  const SVGNS = "http://www.w3.org/2000/svg";
+  const NR = '<span class="nr">not recorded</span>';
+  const clip = (t, n) => { t = String(t ?? ""); return t.length > n ? t.slice(0, n - 1).replace(/\s+\S*$/, "") + "…" : t; };
+  const pretty = iso => { if (!iso) return "—"; const d = new Date(iso + "T12:00:00"); return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }); };
+  const ptTime = iso => { if (!iso) return null; const d = new Date(iso); if (isNaN(d)) return null; return d.toLocaleString("en-US", { timeZone: TZ, month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }) + " PT"; };
+  const KEY = { "grok bot": "grok", "hal": "hal", "cash money": "cash", "compass": "compass", "sitescout": "scout", "5:30 check": "check" };
+  const keyOf = name => KEY[String(name || "").toLowerCase()] || null;
+  const STLABEL = { queued: "queued", pending: "pending", running: "running", needs_review: "review", approved: "approved", rejected: "rejected" };
+  const KL = { plan: "plan", hal_review: "hal review", dispatch: "dispatch", compile: "compile", check: "5:30 check", brief: "6:30 brief", other: "log" };
+  const tag = (st) => `<span class="tag s-${esc(st || "none")}">${esc(STLABEL[st] || st || "no status")}</span>`;
+  const newestRun = () => (D.runs || [])[0] || null;
+  const runFor = date => (D.runs || []).find(r => r.date === date) || null;
 
-  /* ---------------- time helpers (PT) ---------------- */
-  const ptParts = (d = new Date()) => {
-    const p = {}; new Intl.DateTimeFormat("en-US", { timeZone: TZ, hour: "numeric", minute: "2-digit", hour12: false, weekday: "short" })
-      .formatToParts(d).forEach(x => p[x.type] = x.value);
-    return { h: (+p.hour) % 24, m: +p.minute, wd: p.weekday };
-  };
-  const toMin = t => { const m = /^(\d{1,2}):(\d{2})\s*([AP]M)$/i.exec(t || ""); if (!m) return null; let h = +m[1] % 12; if (/p/i.test(m[3])) h += 12; return h * 60 + +m[2]; };
-  const nowMin = () => { const p = ptParts(); return p.h * 60 + p.m; };
-  const prettyDate = iso => { if (!iso) return "—"; const d = new Date(iso + "T12:00:00"); return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }); };
-
-  /* ---------------- sprites ---------------- */
-  const PAL = {
-    grok: { head: "#d9dde8", body: "#3b4252", acc: "#ffcc33", eye: "#36e3ff", c: "#ffcc33" },
-    hal: { head: "#2f2f38", body: "#6b4fa0", acc: "#ff3b3b", eye: "#ff3b3b", c: "#b48cff" },
-    cash: { head: "#9fe3a3", body: "#1f7a3d", acc: "#ffd84a", eye: "#10301a", c: "#4ade80" },
-    compass: { head: "#9cc8ff", body: "#2856a6", acc: "#ff5a5a", eye: "#0c1c3a", c: "#7aa2ff" },
-    scout: { head: "#ffc58f", body: "#c0602a", acc: "#5b3a1e", eye: "#2a1405", c: "#fb923c" },
-    check: { head: "#a9f0e6", body: "#14796f", acc: "#f3efe2", eye: "#0b2c28", c: "#2dd4bf" },
-  };
-  function sprite(key) {
-    const p = PAL[key], r = (x, y, w, h, f, cls = "") => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"${cls ? ` class="${cls}"` : ""}/>`;
-    let s = `<svg viewBox="0 0 12 16" width="100%" aria-hidden="true">`;
-    // antenna / hat
-    if (key === "scout") s += r(2, 1, 8, 2, p.acc) + r(1, 2, 10, 1, p.acc);
-    else s += r(5, 0, 2, 1, p.acc) + r(5.5, 1, 1, 1, "#888");
-    s += r(2, 2, 8, 6, p.head) + r(2, 7, 8, 1, "rgba(0,0,0,.18)");
-    if (key === "hal") s += r(4, 3, 4, 4, "#111") + r(5, 4, 2, 2, p.eye);
-    else s += r(4, 4, 1, 2, p.eye) + r(7, 4, 1, 2, p.eye) + r(5, 6, 2, 1, "rgba(0,0,0,.35)");
-    s += r(2, 8, 8, 5, p.body) + r(2, 12, 8, 1, "rgba(0,0,0,.2)");
-    if (key === "cash") s += r(5.5, 8.5, 1, 4, p.acc) + r(4.5, 9, 3, 1, p.acc) + r(4.5, 11, 3, 1, p.acc);
-    if (key === "compass") s += r(4.5, 9, 3, 3, "#e8eefc") + r(5.5, 9, 1, 1.5, p.acc);
-    if (key === "hal") s += r(5.5, 8, 1, 4, "#ff3b3b");
-    if (key === "grok") s += r(4, 9, 4, 2, "#2a2f3a") + r(4.5, 9.5, 1, 1, p.eye) + r(6.5, 9.5, 1, 1, p.eye);
-    if (key === "check") s += r(4, 8.5, 4, 4, p.acc) + r(4.5, 9.5, 3, .6, "#555") + r(4.5, 10.8, 3, .6, "#555");
-    s += `<g class="armA">${r(1, 9, 1, 3, p.head)}${r(10, 9, 1, 3, p.head)}</g><g class="armB">${r(1, 8, 1, 3, p.head)}${r(10, 10, 1, 3, p.head)}</g>`;
-    s += `<g class="legA">${r(3, 13, 2, 3, "#22263a")}${r(7, 13, 2, 3, "#22263a")}</g><g class="legB">${r(3, 13, 2, 2, "#22263a")}${r(7, 13, 2, 3, "#22263a")}${r(2.5, 15, 2, 1, "#22263a")}</g>`;
-    return s + "</svg>";
-  }
-  const CHECK = `<svg class="badge ok" viewBox="0 0 8 8"><rect width="8" height="8" rx="1" fill="#16a34a"/><path d="M1.6 4.2 3.2 5.8 6.4 2.4" stroke="#fff" stroke-width="1.2" fill="none"/></svg>`;
-  const XMARK = `<svg class="badge no" viewBox="0 0 8 8"><rect width="8" height="8" rx="1" fill="#dc2626"/><path d="M2 2 6 6M6 2 2 6" stroke="#fff" stroke-width="1.2"/></svg>`;
-  const FOLDER = `<svg class="folder" viewBox="0 0 8 6"><rect x="0" y="0" width="3" height="1" fill="#d99a1e"/><rect x="0" y="1" width="8" height="5" fill="#f7c948"/><rect x="0" y="1" width="8" height="1" fill="#e3b02f"/></svg>`;
-  function desk(key, deco) {
-    const r = (x, y, w, h, f, cls = "") => `<rect x="${x}" y="${y}" width="${w}" height="${h}" fill="${f}"${cls ? ` class="${cls}"` : ""}/>`;
-    let s = `<svg viewBox="0 0 40 26" width="100%" aria-hidden="true">`;
-    s += r(3, 1, 13, 9, "#1d2233") + r(4, 2, 11, 7, "#34405f", "screen") + r(8, 10, 3, 1, "#1d2233");
-    s += r(0, 10, 40, 5, "#b07a4f") + r(0, 10, 40, 1, "#c99366") + r(0, 15, 40, 8, "#7b4f2e") + r(1, 23, 3, 3, "#4a2f1b") + r(36, 23, 3, 3, "#4a2f1b");
-    s += r(18, 12, 9, 2, "#2b2f40") + r(19, 12.5, 7, 1, "#454b63");
-    if (deco === "mug") s += r(31, 8, 3, 3, "#e8e8e8") + r(34, 9, 1, 1.5, "#e8e8e8");
-    if (deco === "plant") s += r(31, 9, 4, 2, "#8a4b2a") + r(31, 5, 1, 4, "#3fa34d") + r(33, 4, 1, 5, "#4cc35b") + r(34, 6, 1, 3, "#3fa34d");
-    if (deco === "papers") s += r(29, 10, 7, 2, "#f1f1f1") + r(30, 9, 6, 1, "#ddd");
-    if (deco === "lamp") s += r(33, 4, 1, 6, "#666") + r(31, 3, 5, 2, "#ffd84a");
-    return s + "</svg>";
+  /* sparkline from a REAL series; fewer than 2 points -> show the value only */
+  function spark(vals) {
+    const pts = vals.filter(v => v != null);
+    if (pts.length < 2) return `<span class="sv">${pts.length ? esc(pts[0]) : "—"}</span>`;
+    const lo = Math.min(...pts), hi = Math.max(...pts), W = 46, H = 14, n = pts.length;
+    const xy = pts.map((v, i) => [(i / (n - 1)) * W, hi === lo ? H / 2 : H - ((v - lo) / (hi - lo)) * (H - 2) - 1]);
+    return `<svg class="spark" viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" aria-label="${esc(pts.join(" → "))} across ${n} nights"><title>${esc(pts.join(" → "))} (one point per night)</title><polyline points="${xy.map(p => p.map(c => c.toFixed(1)).join(",")).join(" ")}"/><circle cx="${xy[n - 1][0].toFixed(1)}" cy="${xy[n - 1][1].toFixed(1)}" r="1.6"/></svg>`;
   }
 
-  /* ---------------- layout (percent of scene) ---------------- */
-  const SEATS = { cash: [18, 33, "papers"], compass: [50, 33, "plant"], scout: [82, 33, "mug"], grok: [18, 63, "lamp"], hal: [50, 63, "mug"], check: [82, 63, "papers"] };
-  const AISLE = { 33: 62, 63: 95 };
-  const seat = k => { const [x, t] = SEATS[k]; return [x + 3, t + 12.5]; };
-  const stand = k => { const [x, t] = SEATS[k]; return [x, AISLE[t]]; };
-
-  function statusMode(c, live) {
-    const st = c.status;
-    if (c.key === "grok" && live.dispatch) return "dispatch";
-    if (c.key === "check" && (D.with_checker || []).length) return "reviewing";
-    if (st === "running") return "running";
-    if (st === "needs_review") return "review";
-    if (st === "approved") return "approved";
-    if (st === "rejected") return "rejected";
-    return "idle";
-  }
-
-  function dispatchWindow() {
-    const n = nowMin();
-    for (const d of D.dispatch || []) {
-      const t = toMin(d.time); if (t == null) continue;
-      let diff = n - t; if (diff < -720) diff += 1440; if (diff > 720) diff -= 1440;
-      if (diff >= -5 && diff <= 25) return d;
-    }
-    return null;
-  }
-
-  function buildScene() {
-    const sc = $("scene"); const p = ptParts();
-    const sky = (p.h >= 7 && p.h < 17) ? "day" : ((p.h >= 17 && p.h < 19) || (p.h >= 5 && p.h < 7)) ? "dusk" : "night";
-    let stars = ""; for (let i = 0; i < 9; i++) stars += `<i class="star" style="left:${(i * 37) % 92 + 4}%;top:${(i * 53) % 70 + 8}%"></i>`;
-    const win = l => `<div class="win ${sky}" style="left:${l}%">${sky === "day" ? '<i class="sun" style="left:62%;top:14%"></i>' : stars + '<i class="moon" style="left:64%;top:12%"></i>'}</div>`;
-    const jobs = D.jobs || [], cnt = s => jobs.filter(j => j.status === s).length;
-    let h = `<div class="wall">${win(6)}${win(23)}<div class="sign">AGENT OFFICE</div>
-      <div class="board"><b>${esc(prettyDate(D.night))}</b> night<br>${jobs.length} jobs · ✓${cnt("approved")} ✗${cnt("rejected")}<br>run ${cnt("running")} · review ${cnt("needs_review")} · queue ${cnt("queued") + cnt("pending")}</div>
-      <div class="wclock" id="wclock"></div></div><div class="floor"></div><div class="rug"></div>`;
-    h += `<svg class="plant" style="left:1%;top:80%" viewBox="0 0 10 16"><rect x="2" y="11" width="6" height="5" fill="#8a4b2a"/><rect x="4" y="2" width="2" height="9" fill="#3fa34d"/><rect x="1" y="5" width="3" height="2" fill="#4cc35b"/><rect x="6" y="3" width="3" height="2" fill="#4cc35b"/><rect x="6" y="7" width="3" height="2" fill="#3fa34d"/></svg>`;
-    h += `<svg class="cooler" style="left:94%;top:82%" viewBox="0 0 8 16"><rect x="1" y="0" width="6" height="5" fill="#9fd3ff"/><rect x="0" y="5" width="8" height="11" fill="#e5e7eb"/><rect x="2" y="7" width="2" height="1" fill="#3b82f6"/></svg>`;
-    for (let i = 0; i < 14; i++) h += `<i class="confetti" style="left:${(i * 29) % 96 + 2}%;top:${30 + (i * 13) % 20}%;background:${["#4ade80", "#fbbf24", "#60a5fa", "#f472b6"][i % 4]};animation-delay:${(i % 7) * .3}s"></i>`;
-    for (const c of D.cast) {
-      const [x, t, deco] = SEATS[c.key];
-      h += `<div class="desk" id="desk-${c.key}" style="left:${x}%;top:${t}%;--z:${Math.round((t + 20) * 10)}">${desk(c.key, deco)}</div>`;
-    }
-    for (const c of D.cast) {
-      h += `<div class="bot" id="bot-${c.key}" style="--c:${PAL[c.key].c}"><div class="sprite">${sprite(c.key)}${CHECK}${XMARK}${FOLDER}</div><span class="bubble"></span><span class="tag">${esc(c.name)}</span></div>`;
-    }
-    sc.innerHTML = h;
-    tickClock();
-  }
-
-  function routeKeyframes(stops) {
-    // stops: [[x,y],...] closed loop; equal time per leg plus dwell
-    const n = stops.length; let css = "@keyframes route{";
-    stops.forEach((s, i) => { const a = (i / n) * 100, b = a + 100 / n * .45; css += `${a.toFixed(1)}%,${b.toFixed(1)}%{left:${s[0]}%;top:${s[1]}%}`; });
-    css += `100%{left:${stops[0][0]}%;top:${stops[0][1]}%}}`;
-    let st = document.getElementById("route-kf"); if (!st) { st = document.createElement("style"); st.id = "route-kf"; document.head.appendChild(st); }
-    st.textContent = css;
-  }
-
-  function place(c, mode) {
-    const el = $("bot-" + c.key); if (!el) return;
-    el.className = "bot " + mode;
-    const bub = el.querySelector(".bubble"); bub.textContent = "";
-    let [x, y] = seat(c.key);
-    const deskEl = $("desk-" + c.key); deskEl && deskEl.classList.toggle("on", mode === "running" || mode === "reviewing");
-    const target = c.key === "hal" ? [SEATS.check[0] - 12, SEATS.check[1] + 14] : [SEATS.hal[0] - 13, SEATS.hal[1] + 14];
-    if (mode === "idle") {
-      [x, y] = stand(c.key);
-      const span = c.key === "grok" || c.key === "check" ? 7 : 6;
-      el.style.setProperty("--x2", (x + (c.key.length % 2 ? span : -span)) + "%");
-      el.style.setProperty("--dur", (7 + c.key.length) + "s");
-    } else if (mode === "approved" || mode === "rejected") {
-      [x, y] = stand(c.key);
-    } else if (mode === "review") {
-      el.style.setProperty("--ay", AISLE[33] + "%");
-      el.style.setProperty("--tx", target[0] + "%"); el.style.setProperty("--ty", target[1] + "%");
-      bub.textContent = c.key === "hal" ? "→ 5:30 Check" : "→ Hal";
-      if (RM.matches) [x, y] = target;
-    } else if (mode === "running") bub.textContent = "typing…";
-    else if (mode === "reviewing") bub.textContent = `reviewing ${D.with_checker.length}`;
-    else if (mode === "dispatch") {
-      const owners = D.cast.filter(o => o.jobs.length && o.key !== "grok");
-      const stops = [seat("grok"), stand("grok")].concat((owners.length ? owners : D.cast.filter(o => o.key !== "grok")).map(o => [SEATS[o.key][0], AISLE[33]])).concat([[SEATS.grok[0], AISLE[33]]]);
-      routeKeyframes(stops); el.style.setProperty("--dur", (stops.length * 1.6) + "s");
-      bub.textContent = "jobs!";
-      if (RM.matches) [x, y] = stops[2] || stand("grok");
-    }
-    el.style.setProperty("--x", x + "%"); el.style.setProperty("--y", y + "%");
-    el.style.zIndex = Math.round(y * 10) + (mode === "running" || mode === "reviewing" ? 0 : 400);
-    el.style.left = x + "%"; el.style.top = y + "%";
-  }
-
-  function liveScene() {
-    if (replaying) return;
-    const d = dispatchWindow();
-    const modes = {};
-    for (const c of D.cast) { modes[c.key] = statusMode(c, { dispatch: !!d }); place(c, modes[c.key]); }
-    $("scene").classList.toggle("party", (D.jobs || []).length > 0 && D.jobs.every(j => j.status === "approved"));
-    const desc = { idle: "idle", running: "running: typing at the desk", review: "needs review: carrying a folder", approved: "approved", rejected: "rejected", dispatch: "handing out jobs", reviewing: "reviewing jobs" };
-    $("roster").innerHTML = D.cast.map(c => {
-      let s = c.status ? `<span class="st st-${esc(c.status)}">${esc(c.status.replace("_", " "))}</span>` : `<span class="st st-none">no job tonight</span>`;
-      let extra = c.jobs.length ? ` <span class="dim">${esc(c.jobs.join(", "))}</span>` : "";
-      if (c.key === "grok") extra = d ? ` <span class="dim">${esc(d.time)}: ${esc(d.what)}</span>` : ` <span class="dim">hands out jobs ${esc((D.dispatch || []).map(x => x.time).join(" & ") || "(no run-log times)")}</span>`;
-      if (c.key === "check") {
-        const chk = (D.runs[0] || { sections: [] }).sections.find(s => s.kind === "check");
-        extra = (D.with_checker || []).length ? ` <span class="dim">reviewing ${D.with_checker.length}</span>` : chk ? ` <span class="dim">last ran ${esc(D.check_time || chk.time || "")}</span>` : ` <span class="dim">not run yet</span>`;
-      }
-      return `<li><b>${esc(c.name)}</b> ${s}${extra}<br><span class="dim">${esc(desc[modes[c.key]])}</span></li>`;
-    }).join("");
-    const parts = [];
-    if (d) parts.push(`Grok Bot is on its ${esc(d.time)} round (${esc(d.what)}).`);
-    const n = (D.jobs || []).length;
-    parts.push(n ? `Showing ${n} job${n > 1 ? "s" : ""} from the night of ${esc(prettyDate(D.night))}, the newest on the board.` : "No jobs on the board yet.");
-    $("caption").innerHTML = parts.join(" ");
-  }
-
-  function replay() {
-    if (replaying) return;
-    replaying = true; $("replay").disabled = true;
-    const run = D.runs[0] || { sections: [] }; const sec = k => run.sections.find(s => s.kind === k);
-    const owners = D.cast.filter(c => c.jobs.length);
-    const ok = D.jobs.filter(j => j.status === "approved").length, bad = D.jobs.filter(j => j.status === "rejected").length;
-    const plan = sec("plan"), disp = sec("dispatch"), comp = sec("compile"), chk = sec("check");
-    const steps = [
-      [6500, `${plan ? esc(plan.time) + " plan, " : ""}${disp ? esc((disp.body_times[0] || disp.time)) : ""}: Grok Bot hands ${D.jobs.length} jobs to ${owners.map(o => esc(o.name)).join(", ")}.`, c => c.key === "grok" ? "dispatch" : "idle"],
-      [4500, "Workers run their jobs.", c => c.jobs.length ? "running" : "idle"],
-      [7000, `${comp ? esc(comp.time) + " " : ""}Hal compiles; finished jobs go to needs_review and are walked over.`, c => c.jobs.length ? "review" : (c.key === "check" ? "reviewing" : "idle")],
-      [5000, chk ? `${esc(D.check_time || chk.time)} 5:30 check: ${ok} approved, ${bad} rejected.` : "5:30 check: not run yet.", c => c.status === "approved" ? "approved" : c.status === "rejected" ? "rejected" : c.jobs.length ? "review" : "idle"],
-    ];
-    const saved = D.with_checker; let i = 0;
-    const go = () => {
-      if (i >= steps.length) { replaying = false; D.with_checker = saved; $("replay").disabled = false; liveScene(); return; }
-      const [ms, cap, fn] = steps[i++];
-      D.with_checker = i === 3 ? D.jobs.map(j => j.id) : [];
-      for (const c of D.cast) place(c, fn(c));
-      $("scene").classList.toggle("party", i === 4 && ok > 0);
-      $("caption").innerHTML = `<b>Replay of the newest run log</b> · ${cap}`;
-      replayTimer = setTimeout(go, RM.matches ? Math.max(ms, 4000) : ms);
-    };
-    go();
-  }
-
-  /* ---------------- feed ---------------- */
-  const KL = { plan: "Plan", hal_review: "Hal review", dispatch: "Hand-off", compile: "Hal compile", check: "5:30 check", brief: "6:30 brief", other: "Log" };
-  function entry(s) {
-    return `<div class="entry"><div class="hd"><span class="kind ${s.kind}">${KL[s.kind] || "Log"}</span><span class="h">${inline(s.heading)}</span></div><div class="md">${md(s.body)}</div></div>`;
-  }
-  const emptyE = (kind, txt) => `<div class="entry empty"><span class="kind ${kind}">${KL[kind]}</span> ${esc(txt)}</div>`;
-  function tickerStrip(mdText) {
-    const L = (mdText || "").split("\n"); const i = L.findIndex(l => /^\|\s*Ticker\s*\|/i.test(l)); if (i < 0) return "";
-    const hdr = L[i].replace(/^\||\|$/g, "").split("|").map(c => c.trim().toLowerCase());
-    const bi = hdr.findIndex(h => h.startsWith("bias")); if (bi < 0) return "";
-    const rows = []; for (let k = i + 2; k < L.length && /^\s*\|/.test(L[k]); k++) {
-      const c = L[k].trim().replace(/^\||\|$/g, "").split("|").map(x => x.trim());
-      const bias = (c[bi] || "").split(/(?<=\.)\s/)[0];
-      rows.push(`<tr><td data-label="Ticker">${inline(c[0])}</td><td data-label="Bias">${inline(bias)}</td></tr>`);
-    }
-    return `<div class="md"><div class="tw"><table><thead><tr><th>Ticker</th><th>Bias (first line)</th></tr></thead><tbody>${rows.join("")}</tbody></table></div></div>`;
-  }
-  function renderFeed() {
-    let h = "";
-    (D.outbox || []).slice(0, 2).forEach((o, i) => {
-      h += `<div class="entry"><div class="hd"><span class="kind outbox">Outbox</span><span class="h">${esc(o.title || o.file)}</span></div>
-        <div class="md"><p>${o.awaiting_jeffrey ? "<b>Awaiting Jeffrey</b> · " : ""}<span class="dim">${esc(o.file)} · changed ${esc(o.mtime || "—")}</span> · <a href="#ob-${i}">open sheet</a></p></div>${i === 0 ? tickerStrip(o.markdown) : ""}</div>`;
-    });
-    if (!(D.outbox || []).length) h += `<div class="entry empty"><span class="kind outbox">Outbox</span> Outbox is empty.</div>`;
-    if (D.missing_night) {
-      h += `<div class="night"><h3>Night of ${esc(prettyDate(D.missing_night.date))}</h3>${emptyE("plan", "Plan: not run yet.")}${emptyE("check", "5:30 check: not run yet.")}${emptyE("brief", "6:30 brief: not run yet.")}<p class="dim" style="font-size:12px">${esc(D.missing_night.note)}</p></div>`;
-    }
-    (D.runs || []).forEach((r, idx) => {
-      const secs = r.sections.slice().reverse();
-      const has = k => r.sections.some(s => s.kind === k);
-      let inner = "";
-      if (!has("brief")) inner += emptyE("brief", "6:30 brief: not run yet.");
-      if (!has("check")) inner += emptyE("check", "5:30 check: not run yet.");
-      inner += secs.map(entry).join("");
-      if (!has("plan")) inner += emptyE("plan", "Plan: not in this log.");
-      const title = `${esc(r.title || r.date)}`;
-      h += idx === 0 ? `<div class="night"><h3>${title}</h3>${inner}</div>` :
-        `<details class="night more"><summary>${title} · ${r.sections.length} entries</summary>${inner}</details>`;
-    });
-    if (!(D.runs || []).length) h += emptyE("plan", "No run logs yet.");
-    $("feed").innerHTML = h;
-  }
-
-  /* ---------------- panels ---------------- */
-  function renderBudget() {
-    const cap = D.caps.calls, warn = D.caps.warn_pct;
-    let h = `<p class="note" style="margin-top:0">Cap <b>${cap ?? "not stated"}</b> tool calls per bot per night${warn ? `, priority-1 only after ${warn}%` : ""}; $ cap <b>${D.caps.usd != null ? "$" + D.caps.usd : "not stated"}</b> (from BOARD.md). Night of ${esc(prettyDate(D.night))}.</p>`;
-    for (const b of D.budget) {
-      const pct = b.calls != null && cap ? Math.min(100, b.calls / cap * 100) : 0;
-      const cls = b.calls != null && cap && b.calls > cap ? "o" : (warn && pct >= warn ? "w" : "");
-      h += `<div class="brow"><span class="n">${esc(b.bot)}</span><span class="bar">${b.calls != null ? `<i class="${cls}" style="width:${pct}%"></i>` : ""}${warn ? `<u style="left:${warn}%"></u>` : ""}</span>
-        <span class="v">${b.calls != null ? `${b.calls}/${cap}` : '<span class="nr">not recorded</span>'}</span>
-        <span class="sp">$ spend: ${b.usd != null ? "$" + b.usd : '<span class="nr">not recorded</span>'}${b.note ? " · " + esc(b.note) : ""}${!b.jobs ? " · no job file tonight" : ""}</span></div>`;
-    }
-    const ts = D.team_spend;
-    h += `<p class="note">${ts ? `Team spend recorded in the run log (${esc(ts.source)}): <b>$${esc(ts.values.join(", $"))}</b>. Per-bot $ is not recorded in the job files.` : "Team $ spend: <span class=\"nr\">not recorded</span>."} Calls are the sum of <code>calls_used</code> in each bot's job files for that night.</p>`;
-    $("budget").innerHTML = h;
-  }
-  function renderAwaiting() {
-    const aw = (D.outbox || []).map((o, i) => [o, i]).filter(([o]) => o.awaiting_jeffrey);
-    $("awaiting").innerHTML = aw.length ? aw.map(([o, i]) => `<div class="item"><b>${esc(o.title || o.file)}</b>${i === 0 ? ' <span class="st st-needs_review">newest</span>' : ""}<div class="f">${esc(o.file)} · changed ${esc(o.mtime || "—")}</div><a href="#ob-${i}">Read it below</a></div>`).join("")
-      : `<div class="empty-box">Nothing in the outbox is awaiting Jeffrey.</div>`;
-    const rev = (D.jobs || []).filter(j => j.status === "needs_review");
-    $("checker").innerHTML = rev.length ? rev.map(j => `<div class="item"><b>${esc(j.id)}</b> · ${esc(j.owner)} <span class="st st-needs_review">needs review</span></div>`).join("")
-      : `<div class="empty-box">Nothing with the 5:30 checker right now (0 jobs in needs_review).</div>`;
-  }
-  const clip = (t, n) => { t = String(t || ""); return t.length > n ? t.slice(0, t.lastIndexOf(" ", n) > 0 ? t.lastIndexOf(" ", n) : n) + "…" : t; };
-  function renderJobs() {
-    const J = D.jobs || [];
-    if (!J.length) { $("jobs").innerHTML = `<div class="empty-box">No job files on the board.</div>`; return; }
-    $("jobs").innerHTML = `<p class="note" style="margin-top:0">Night of ${esc(prettyDate(D.night))}: ${J.length} jobs. Earlier nights: ${(D.older_jobs || []).length} jobs (${(D.older_jobs || []).filter(j => j.status === "approved").length} approved).</p>` + J.map(j => {
-      const links = (j.sources || []).flatMap(s => s.urls.map(u => [s.label, u]));
-      const labels = (j.sources || []).filter(s => !s.urls.length && s.label).map(s => s.label);
-      return `<div class="job"><div class="row1"><b>${esc(j.owner)}</b><span class="st st-${esc(j.status || "none")}">${esc((j.status || "no status").replace("_", " "))}</span><span class="dim">P${esc(j.priority ?? "?")} · ${esc(j.id)} · ${j.calls_used != null ? esc(j.calls_used) + " calls" : "calls not recorded"}</span></div>
-      <div class="task">${esc(clip(j.task, 170))}</div>
-      ${j.review ? `<div class="task"><b>Review:</b> ${esc(clip(j.review, 150))}</div>` : ""}
-      <details class="more"><summary>Full task${j.result ? ", result" : ""}${j.review ? " and review" : ""}</summary><div class="task">${inline(j.task || "")}</div>
-      ${j.result ? `<div class="task"><b>Result:</b> ${inline(j.result)}</div>` : ""}
-      ${j.review ? `<div class="task"><b>Review:</b> ${inline(j.review)}</div>` : ""}</details>
-      <details class="more"><summary>Sources (${links.length} links)</summary><ul class="srcs">${links.map(([l, u]) => `<li>${l ? esc(l) + ": " : ""}${inline(u)}</li>`).join("")}${labels.map(l => `<li class="dim">${esc(l)}</li>`).join("")}</ul></details>
-      ${j.evidence ? `<details class="more"><summary>Evidence</summary><div class="md">${md(j.evidence)}</div></details>` : ""}</div>`;
-    }).join("");
-  }
-  function renderOutbox() {
-    const O = D.outbox || [];
-    $("outbox").innerHTML = O.length ? O.map((o, i) => i === 0
-      ? `<article id="ob-${i}"><p class="dim" style="font-size:12px;margin:0">${esc(o.file)} · changed ${esc(o.mtime || "—")}</p><div class="md">${md(o.markdown)}</div></article>`
-      : `<details class="more" id="ob-${i}"><summary>Older: ${esc(o.title || o.file)} (${esc(o.file)})</summary><div class="md">${md(o.markdown)}</div></details>`).join("")
-      : `<div class="empty-box">Outbox is empty.</div>`;
+  /* ---------------- top bar ---------------- */
+  function renderBar() {
+    const J = D.jobs || [], aw = (D.outbox || []).filter(o => o.awaiting_jeffrey).length;
+    const r = runFor(D.night);
+    $("b-night").innerHTML = `<em>night</em> ${esc(D.night ? pretty(D.night).toUpperCase() : "none on board")}${r && r.title ? ` <em>· ${esc((r.title.match(/\(for (.*)\)/) || [])[1] || "")}</em>` : ""}`;
+    $("b-jobs").innerHTML = `<em>jobs</em> ${J.length}`;
+    $("b-gate").innerHTML = `<em>gate</em> <span class="${aw ? "am" : ""}">${aw} awaiting jeffrey</span>`;
+    $("b-built").innerHTML = `<em>data built</em> ${esc(D.built_at || "—")} <em>· board changed</em> ${esc(D.board_newest_change || "—")}`;
+    const b = $("banner");
+    if (D.missing_night) { b.hidden = false; b.textContent = `Night of ${pretty(D.missing_night.date)}: no run log yet. Plan: not run yet · 5:30 check: not run yet · 6:30 brief: not run yet. Showing the newest night on the board.`; }
+    else b.hidden = true;
   }
   function tickClock() {
-    const s = new Date().toLocaleTimeString("en-US", { timeZone: TZ, hour: "numeric", minute: "2-digit" });
-    if ($("clock")) $("clock").textContent = s + " PT";
-    if ($("wclock")) $("wclock").textContent = s.replace(/\s?[AP]M/, "");
+    $("clock").textContent = new Date().toLocaleTimeString("en-US", { timeZone: TZ, hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true }) + " PT";
   }
 
-  function render() {
-    $("meta").innerHTML = `Last updated <b>${esc(D.built_at)}</b><br><span>Board last changed ${esc(D.board_newest_change || "—")}</span>`;
-    buildScene(); liveScene(); renderFeed(); renderBudget(); renderAwaiting(); renderJobs(); renderOutbox();
+  /* ---------------- left column ---------------- */
+  function renderBrief() {
+    const g = (D.goals || []).find(x => x.active) || (D.goals || [])[0];
+    if (!g) { $("brief").innerHTML = `<div class="empty">No goal files on the board.</div>`; return; }
+    const f = g.fields || {}, row = (k, v) => `<dt>${esc(k)}</dt><dd>${v == null || v === "" ? NR : inline(v)}</dd>`;
+    $("brief").innerHTML = `<div class="clamp3" title="${esc(g.title)}"><b>${esc(g.title)}</b></div>
+      <dl class="kvr" style="margin-top:5px">${row("goal", g.file.replace(/^goals\//, ""))}${row("status", g.active ? "active (BOARD.md)" : "not listed active")}${row("owner", f.Owner)}${row("workers", f.Workers)}${row("scope", f.Scope)}${row("output", f.Deliverables)}${row("approval", f.Approval)}</dl>
+      ${f.Success ? `<details class="more"><summary>success criteria</summary><div class="sub">${inline(f.Success)}</div></details>` : ""}`;
   }
+  function renderSources() {
+    const g = (D.goals || [])[0] || {}, f = g.fields || {}, si = D.sources_index || {};
+    const allJobs = (D.jobs || []).length + (D.older_jobs || []).length;
+    $("sources").innerHTML = `<dl class="kvr">
+      <dt>allowed</dt><dd>${f.Sources ? inline(f.Sources) : NR}</dd>
+      <dt>board</dt><dd>BOARD.md · ${(D.goals || []).length} goal · ${allJobs} job files · ${(D.runs || []).length} run logs · ${(D.outbox || []).length} outbox</dd>
+      <dt>cited</dt><dd>${si.total_links != null ? `<b>${si.total_links}</b> public links in ${si.source_entries} source entries (${si.unlinked_entries} without a link), night ${esc(pretty(si.night))}` : NR}</dd></dl>`;
+  }
+  function renderRules() {
+    const c = D.caps || {};
+    $("rules").innerHTML = `<dl class="kvr"><dt>calls</dt><dd>${c.calls != null ? `<b>${c.calls}</b> / bot / night` : NR}</dd><dt>spend</dt><dd>${c.usd != null ? `<b>$${c.usd}</b> cap` : NR}</dd><dt>at ${c.warn_pct ?? "?"}%</dt><dd>priority-1 jobs only</dd></dl>
+      <div class="hr"></div><ul class="rl">${(D.rules || []).map(r => `<li class="clamp2" title="${esc(r.replace(/`/g, ""))}">${inline(r)}</li>`).join("") || `<li>${NR}</li>`}</ul><p class="sub">From BOARD.md, verbatim.</p>`;
+  }
+  function renderBudget() {
+    const cap = D.caps.calls, warn = D.caps.warn_pct, H = D.history || [];
+    let h = `<div class="brow dimk" style="font-size:10px"><span>bot</span><span>calls tonight</span><span class="v">/${cap ?? "?"}</span><span class="v">nights</span></div>`;
+    for (const b of D.budget || []) {
+      const k = keyOf(b.bot), pct = b.calls != null && cap ? Math.min(100, b.calls / cap * 100) : 0;
+      const cls = b.calls != null && cap && b.calls > cap ? "o" : (warn && pct >= warn ? "w" : "");
+      h += `<div class="brow" title="${esc(b.note || (b.jobs ? b.jobs + " job file(s) tonight" : "no job file tonight"))}"><span class="n">${esc(b.bot)}</span><span class="bar">${b.calls != null ? `<i class="${cls}" style="width:${pct}%"></i>` : ""}${warn ? `<u style="left:${warn}%"></u>` : ""}</span>
+        <span class="v">${b.calls != null ? b.calls : '<span class="nr">n/r</span>'}</span>${spark(H.map(x => x.calls ? x.calls[k] : null))}</div>`;
+    }
+    const ts = D.team_spend;
+    h += `<div class="hr"></div><dl class="kvr"><dt>$ team</dt><dd>${ts ? `<b class="ok">$${esc(ts.values.join(", $"))}</b> <span class="dimk">(${esc(ts.source)})</span>` : NR}</dd><dt>$ per bot</dt><dd>${(D.budget || []).some(b => b.usd != null) ? (D.budget || []).map(b => `${esc(b.bot)} ${b.usd != null ? "$" + b.usd : "n/r"}`).join(" · ") : NR + " <span class=\"dimk\">(no usd_spent in job files)</span>"}</dd></dl>
+      <p class="sub">n/r = not recorded. Grok Bot and the 5:30 Check have no job files.${(D.budget || []).filter(b => b.note).map(b => " " + esc(b.bot) + ": " + esc(b.note) + ".").join("")} Sparklines: calls per night from job files.</p>`;
+    $("budget").innerHTML = h;
+  }
+  function renderPrior() {
+    const H = (D.history || []).slice();
+    if (!H.length) { $("prior").innerHTML = `<div class="empty">No prior runs on the board.</div>`; return; }
+    const ser = f => spark(H.map(f));
+    $("prior").innerHTML = `<div class="brow" style="grid-template-columns:minmax(0,1fr) 46px 46px 46px;font-size:10px"><span class="dimk">per night →</span><span class="sv">jobs</span><span class="sv">calls</span><span class="sv">links</span></div>
+      <div class="brow" style="grid-template-columns:minmax(0,1fr) 46px 46px 46px"><span class="dimk">${H.length} night${H.length > 1 ? "s" : ""}</span>${ser(x => x.jobs)}${ser(x => x.total_calls)}${ser(x => x.links)}</div>
+      <table class="t"><thead><tr><th>night</th><th>jobs</th><th>✓/✗</th><th>calls</th><th>$</th></tr></thead><tbody>${H.slice().reverse().map(x =>
+        `<tr title="${esc(x.run_file || "no run log")}"><td>${esc(pretty(x.date))}</td><td>${x.jobs}</td><td><span class="ok">${x.status.approved || 0}</span>/<span class="${x.status.rejected ? "bad" : ""}">${x.status.rejected || 0}</span></td><td>${x.total_calls ?? "n/r"}</td><td>${x.spend_values ? "$" + esc(x.spend_values.join(",")) : "n/r"}</td></tr>`).join("")}</tbody></table>
+      <p class="sub">Links = public links in that night's job sources. $ = spend stated in that night's run log.</p>`;
+  }
+
+  /* ---------------- right column ---------------- */
+  function renderPlanner() {
+    const r = runFor(D.night) || newestRun();
+    if (!r) { $("planner").innerHTML = `<div class="empty">Plan: not run yet.</div>`; return; }
+    const plan = r.sections.find(s => s.kind === "plan"), rev = r.sections.find(s => s.kind === "hal_review");
+    const first = s => (s.body.split("\n").find(l => l.trim()) || "").replace(/^[-*]\s*/, "");
+    $("planner").innerHTML = `<dl class="kvr">
+      <dt>plan</dt><dd>${plan ? `<span class="cy">${esc(plan.time || "—")}</span> ${esc(plan.heading.replace(/^\d{1,2}:\d{2}\s*[AP]M\s*/i, ""))}` : '<span class="nr">not run yet</span>'}</dd>
+      <dt>review</dt><dd>${rev ? `<span class="cy">${esc(rev.time || "—")}</span> ${esc(clip(first(rev), 90))}` : '<span class="nr">not in log</span>'}</dd>
+      <dt>dispatch</dt><dd>${(D.dispatch || []).map(d => `<span class="cy">${esc(d.time)}</span> ${esc(d.what)}`).join("<br>") || NR}</dd>
+      <dt>planned</dt><dd>${(D.jobs || []).length} jobs · P1 ${(D.jobs || []).filter(j => j.priority === 1).length} · P2 ${(D.jobs || []).filter(j => j.priority === 2).length}</dd></dl>
+      ${plan ? `<details class="more"><summary>plan notes (${esc(r.file)})</summary><div class="md sub">${md(plan.body)}</div></details>` : ""}
+      <div class="hr"></div><div class="dimk" style="font-size:10px">schedule (BOARD.md)</div><ul class="rl">${(D.schedule || []).map(s => `<li class="clamp2">${inline(s)}</li>`).join("")}</ul>`;
+  }
+  function renderJobs() {
+    const J = D.jobs || [], n = s => J.filter(j => j.status === s).length;
+    const c = { q: n("queued") + n("pending"), r: n("running"), v: n("needs_review"), a: n("approved"), x: n("rejected") }, tot = J.length || 1;
+    const O = D.older_jobs || [];
+    $("jobs").innerHTML = `<div class="cnt"><div class="c-q"><b>${c.q}</b><span>queued</span></div><div class="c-r"><b>${c.r}</b><span>running</span></div><div class="c-v"><b>${c.v}</b><span>review</span></div><div class="c-a"><b>${c.a}</b><span>approved</span></div><div class="c-x"><b>${c.x}</b><span>rejected</span></div></div>
+      <div class="stack" title="status mix tonight">${[["q", "#56697a"], ["r", "var(--cy)"], ["v", "var(--am)"], ["a", "var(--gr)"], ["x", "var(--rd)"]].map(([k, col]) => c[k] ? `<i style="width:${c[k] / tot * 100}%;background:${col}"></i>` : "").join("")}</div>
+      <dl class="kvr"><dt>night</dt><dd>${esc(pretty(D.night))} · ${J.length} job files</dd><dt>earlier</dt><dd>${O.length} jobs · ${O.filter(j => j.status === "approved").length} approved · ${O.filter(j => j.status === "rejected").length} rejected</dd><dt>calls/job</dt><dd>${spark((D.history || []).map(h => h.jobs ? (h.total_calls != null ? Math.round(h.total_calls / h.jobs) : null) : null))}</dd></dl>`;
+  }
+  function renderSrcIdx() {
+    const si = D.sources_index || {}, Ds = si.domains || [];
+    if (!Ds.length) { $("srcidx").innerHTML = `<div class="empty">No linked sources in tonight's job files.</div>`; return; }
+    const mx = Math.max(...Ds.map(d => d.links)), row = d => `<div class="dom" title="${esc(d.owners.join(", "))}"><span>${esc(d.domain)}</span><span class="bar"><i style="width:${d.links / mx * 100}%"></i></span><span class="v">${d.links}</span></div>`;
+    $("srcidx").innerHTML = `<dl class="kvr"><dt>links</dt><dd><b>${si.total_links}</b> → ${Ds.length} domains</dd><dt>per job</dt><dd>${(si.per_job || []).map(p => `${esc(p.owner)} ${p.links}`).join(" · ")}</dd></dl><div class="hr"></div>
+      ${Ds.slice(0, 9).map(row).join("")}${Ds.length > 9 ? `<details class="more"><summary>+${Ds.length - 9} more domains</summary>${Ds.slice(9).map(row).join("")}</details>` : ""}`;
+  }
+
+  /* ---------------- bottom strip ---------------- */
+  let rlDate = null;
+  function renderRunlog() {
+    const R = D.runs || [];
+    if (!rlDate || !runFor(rlDate)) rlDate = R.length ? R[0].date : null;
+    $("rl-tabs").innerHTML = R.map(r => `<button class="btn ${r.date === rlDate ? "on" : ""}" type="button" data-rl="${esc(r.date)}">${esc(pretty(r.date))}</button>`).join("");
+    const r = runFor(rlDate);
+    if (!r) { $("runlog").innerHTML = `<div class="empty">No run logs yet. Plan: not run yet.</div>`; return; }
+    const has = k => r.sections.some(s => s.kind === k);
+    let h = `<div class="sub" style="margin:0 0 4px">${esc(r.file)} · changed ${esc(r.mtime || "—")}</div>`;
+    h += r.sections.map((s, i) => `<details class="lg"${i === r.sections.length - 1 && r === R[0] ? "" : ""}><summary><span class="tm">${esc(s.time || "—")}</span><span class="k-${esc(s.kind)}">${esc(KL[s.kind] || "log")}</span><span class="hd">${esc(s.heading.replace(/^\d{1,2}:\d{2}\s*[AP]M\s*/i, ""))} <span class="dimk">· ${esc(clip((s.body.split("\n").find(l => l.trim()) || "").replace(/^[-*]\s*/, ""), 110))}</span></span></summary><div class="body md">${md(s.body)}</div></details>`).join("");
+    if (!has("check")) h += `<div class="empty">5:30 check: not run yet.</div>`;
+    if (!has("brief")) h += `<div class="empty">6:30 brief: not run yet.</div>`;
+    $("runlog").innerHTML = h;
+  }
+  function renderDispatch() {
+    const J = D.jobs || [], cap = D.caps.calls;
+    if (!J.length) { $("dispatch").innerHTML = `<div class="empty">No jobs dispatched for this night.</div>`; return; }
+    const si = Object.fromEntries(((D.sources_index || {}).per_job || []).map(p => [p.id, p.links]));
+    $("dispatch").innerHTML = `<table class="t jb"><thead><tr><th>job</th><th>bot</th><th>p</th><th>status</th><th>calls</th><th>links</th></tr></thead><tbody>${J.map(j => `
+      <tr><td title="${esc(j.file)}">${esc(j.id.replace(/^.*-(\d+)$/, "-$1"))}</td><td>${esc(j.owner)}</td><td>${esc(j.priority ?? "?")}</td><td>${tag(j.status)}</td>
+      <td><span class="bar" style="display:inline-block;width:34px;vertical-align:middle"><i style="width:${j.calls_used != null && cap ? Math.min(100, j.calls_used / cap * 100) : 0}%"></i></span> ${j.calls_used ?? "n/r"}</td><td>${si[j.id] ?? 0}</td></tr>
+      <tr><td colspan="6" class="tk"><div class="tsk" title="${esc(j.task)}">${esc(j.task)}</div>
+      <details class="more"><summary>task, review${j.result ? ", result" : ""} · updated ${esc(ptTime(j.updated) || "n/r")}</summary><div class="sub">${inline(j.task || "")}</div>${j.result ? `<div class="sub"><b>result:</b> ${inline(j.result)}</div>` : ""}<div class="sub"><b>review:</b> ${j.review ? inline(j.review) : NR}</div>
+      <div class="sub"><b>next:</b> ${j.next_step ? inline(j.next_step) : NR}</div></details></td></tr>`).join("")}</tbody></table>
+      <p class="sub">Times from the run log: ${(D.dispatch || []).map(d => esc(d.time) + " " + esc(d.what)).join(" · ") || "not recorded"}.</p>`;
+  }
+  function renderGate() {
+    const O = D.outbox || [], aw = O.map((o, i) => [o, i]).filter(([o]) => o.awaiting_jeffrey);
+    const rev = (D.jobs || []).filter(j => j.status === "needs_review"), ts = D.team_spend;
+    const r = runFor(D.night), brief = r && r.sections.find(s => s.kind === "brief");
+    $("gate").innerHTML = `<div class="big">${ts ? "$" + esc(ts.values.join(", $")) : '<span class="nr" style="font-size:14px">$ not recorded</span>'}</div><div class="sub" style="margin:0 0 6px">spend tonight${ts ? " · " + esc(ts.source) : ""}</div>
+      <div class="dimk" style="font-size:10px;margin-bottom:3px">AWAITING JEFFREY (${aw.length})</div>
+      ${aw.length ? aw.map(([o, i]) => `<div class="gi"><b>${esc(o.title || o.file)}</b>${i === 0 ? ' <span class="tag s-needs_review">newest</span>' : ""}<div class="f">${esc(o.file)} · ${esc(o.mtime || "—")}</div><button class="btn amber" type="button" data-sheet="${i}" style="margin-top:4px">open sheet ▸</button></div>`).join("") : `<div class="empty">Nothing in the outbox is awaiting Jeffrey.</div>`}
+      <div class="dimk" style="font-size:10px;margin:6px 0 3px">WITH THE 5:30 CHECKER (${rev.length})</div>
+      ${rev.length ? rev.map(j => `<div>${esc(j.id)} · ${esc(j.owner)} ${tag(j.status)}</div>`).join("") : `<div class="sub" style="margin:0">None (0 jobs in needs_review).</div>`}
+      <div class="dimk" style="font-size:10px;margin:6px 0 3px">6:30 BRIEF</div><div class="sub" style="margin:0">${brief ? `<span class="cy">${esc(brief.heading)}</span>` : '<span class="nr">not run yet</span>'}</div>`;
+  }
+
+  /* ---------------- This Week drawer ---------------- */
+  let sheetIdx = 0;
+  function tickerCards(mdText) {
+    const L = (mdText || "").split("\n"), i = L.findIndex(l => /^\|\s*Ticker\s*\|/i.test(l)); if (i < 0) return "";
+    const hdr = L[i].replace(/^\s*\||\|\s*$/g, "").split("|").map(c => c.trim().toLowerCase());
+    const at = p => hdr.findIndex(h => h.startsWith(p)), bi = at("bias"), ci = at("mon close") >= 0 ? at("mon close") : hdr.findIndex(h => /close/.test(h));
+    const si = at("support"), ri = at("resistance");
+    const cards = [];
+    for (let k = i + 2; k < L.length && /^\s*\|/.test(L[k]); k++) {
+      const c = L[k].trim().replace(/^\||\|$/g, "").split("|").map(x => x.trim());
+      const first = s => (s || "").split(/;|,(?![^(]*\))/)[0];
+      cards.push(`<div class="tk"><b>${inline(c[0])}</b> <span class="px">${ci >= 0 ? inline(c[ci]) : ""}</span>
+        ${si >= 0 ? `<div class="bi"><span class="ok">S</span> ${inline(clip(first(c[si]), 60))}</div>` : ""}${ri >= 0 ? `<div class="bi"><span class="bad">R</span> ${inline(clip(first(c[ri]), 60))}</div>` : ""}
+        ${bi >= 0 ? `<div class="bi am">${inline(clip((c[bi] || "").split(/(?<=\.)\s/)[0], 110))}</div>` : ""}</div>`);
+    }
+    return cards.length ? `<div class="dimk" style="font-size:10px">AT A GLANCE · first support / first resistance / bias line, from the table below</div><div class="tk-grid">${cards.join("")}</div>` : "";
+  }
+  function renderSheet() {
+    const O = D.outbox || [];
+    $("dr-tabs").innerHTML = O.map((o, i) => `<button class="btn ${i === sheetIdx ? "on" : ""}" type="button" data-sheet="${i}">${esc(o.file.replace(/^outbox\//, "").replace(/\.md$/, ""))}</button>`).join(" ");
+    const o = O[sheetIdx];
+    $("dr-body").innerHTML = o ? `<div class="sub" style="margin:0 0 6px">${esc(o.file)} · changed ${esc(o.mtime || "—")} · ${o.awaiting_jeffrey ? '<span class="am">awaiting Jeffrey</span>' : "status: " + esc(o.status || "not recorded")}</div>${tickerCards(o.markdown)}<div class="md">${md(o.markdown)}</div>`
+      : `<div class="empty">Outbox is empty.</div>`;
+  }
+  function openSheet(i) { sheetIdx = i || 0; renderSheet(); $("drawer").hidden = false; document.body.style.overflow = "hidden"; if (location.hash !== "#sheet") history.replaceState(null, "", "#sheet"); }
+  function closeSheet() { $("drawer").hidden = true; document.body.style.overflow = ""; if (location.hash) history.replaceState(null, "", location.pathname); }
+
+  /* ---------------- handoff graph ---------------- */
+  const LAY = {
+    wide: { vb: [1000, 700], ring: { cx: 350, cy: 350, r: 262, gap: 0, span: 30 }, r: 22, lab: 12,
+      n: { grok: [150, 350], cash: [355, 175], compass: [355, 350], scout: [355, 525], hal: [650, 350], check: [770, 350], outbox: [880, 350], jeff: [965, 350] },
+      up: { check: 1, jeff: 1 }, selfHal: "M150,350 C220,690 560,690 650,350" },
+    tall: { vb: [400, 800], ring: { cx: 200, cy: 210, r: 172, gap: 90, span: 34 }, r: 20, lab: 0,
+      n: { grok: [200, 98], cash: [88, 220], compass: [200, 302], scout: [312, 220], hal: [200, 460], check: [200, 565], outbox: [200, 665], jeff: [200, 760] },
+      up: {}, selfHal: "M200,98 C-70,240 -30,430 200,460" }
+  };
+  const RANK = { none: 0, pend: 1, done: 2, ok: 3, bad: 4, act: 5 };
+  function graphModel() {
+    const J = D.jobs || [], E = {}, N = {};
+    const set = (a, b, st) => { const k = a + ">" + b; if (!E[k] || RANK[st] > RANK[E[k]]) E[k] = st; };
+    const nset = (k, st) => { if (!N[k] || RANK[st] > RANK[N[k]]) N[k] = st; };
+    const r = runFor(D.night);
+    if (r && r.sections.some(s => s.kind === "plan")) nset("grok", "done");
+    for (const j of J) {
+      const k = keyOf(j.owner); if (!k || k === "grok" || k === "check") continue;
+      const s = j.status;
+      if (s === "queued" || s === "pending") { set("grok", k, "pend"); nset(k, "pend"); }
+      else if (s === "running") { set("grok", k, "done"); nset(k, "act"); }
+      else if (s === "needs_review") { set("grok", k, "done"); if (k !== "hal") set(k, "hal", "act"); set("hal", "check", "act"); nset(k, "act"); nset("check", "act"); }
+      else if (s === "approved") { set("grok", k, "ok"); if (k !== "hal") set(k, "hal", "ok"); set("hal", "check", "ok"); set("check", "outbox", "ok"); nset(k, "ok"); }
+      else if (s === "rejected") { set("grok", k, "done"); if (k !== "hal") set(k, "hal", "done"); set("hal", "check", "bad"); nset(k, "bad"); }
+    }
+    const O = D.outbox || [], aw = O.filter(o => o.awaiting_jeffrey).length;
+    if (O.length) nset("outbox", "ok");
+    if (aw) { set("outbox", "jeff", "act"); nset("jeff", "act"); }
+    else if (O.length) set("outbox", "jeff", "done");
+    if (r && r.sections.some(s => s.kind === "check")) nset("check", "ok");
+    return { E, N, aw };
+  }
+  function nodeText(k) {
+    const J = D.jobs || [], cap = D.caps.calls, mine = J.filter(j => keyOf(j.owner) === k);
+    const O = D.outbox || [], aw = O.filter(o => o.awaiting_jeffrey).length;
+    const si = Object.fromEntries(((D.sources_index || {}).per_job || []).map(p => [p.id, p.links]));
+    const j0 = mine[0], l1 = j0 ? `${STLABEL[j0.status] || j0.status} · ${j0.calls_used ?? "n/r"}/${cap}` : "no job tonight", l2 = j0 ? `${si[j0.id] ?? 0} links cited` : "idle";
+    switch (k) {
+      case "grok": return ["Grok Bot", "router / plan", (D.dispatch || [])[0] ? "plan " + D.dispatch[0].time : "plan: not run yet", (D.dispatch || [])[1] ? "dispatch " + D.dispatch[1].time : "no dispatch logged"];
+      case "hal": { const r = runFor(D.night), c = r && r.sections.find(s => s.kind === "compile"); return ["Hal", "chief of staff", l1, c && c.time ? "compile " + c.time : l2]; }
+      case "check": { const a = J.filter(j => j.status === "approved").length, x = J.filter(j => j.status === "rejected").length; return ["5:30 Check", "reviewer", D.check_time ? "ran " + D.check_time : "not run yet", D.check_time ? `✓${a} ✗${x}` : ""]; }
+      case "outbox": return ["outbox", "deliverables", O.length ? `${O.length} file${O.length > 1 ? "s" : ""}` : "empty", O.length ? "newest " + ((O[0].mtime || "").replace(/^\d{4}-\d{2}-\d{2}\s*/, "").replace(/:\d\d PT$/, " PT") || "—") : ""];
+      case "jeff": return ["Jeffrey", "human gate", aw ? `${aw} awaiting` : "nothing awaiting", aw ? "approval" : ""];
+      default: return [({ cash: "Cash Money", compass: "Compass", scout: "SiteScout" })[k], "worker", l1, l2];
+    }
+  }
+  const COL = { none: "#3a4a58", pend: "#7f93a4", done: "#22d3ee", ok: "#3ddc97", bad: "#ff5d6c", act: "#f5b041" };
+  function curve(a, b, bend) {
+    const [x1, y1] = a, [x2, y2] = b, mx = (x1 + x2) / 2, my = (y1 + y2) / 2, dx = x2 - x1, dy = y2 - y1;
+    return `M${x1},${y1} Q${(mx - dy * bend).toFixed(1)},${(my + dx * bend).toFixed(1)} ${x2},${y2}`;
+  }
+  function renderGraph() {
+    const svg = $("graph"), w = $("gwrap").clientWidth || 800, L = w < 560 ? LAY.tall : LAY.wide;
+    svg.setAttribute("viewBox", `0 0 ${L.vb[0]} ${L.vb[1]}`);
+    const { E, N, aw } = graphModel(), P = L.n, si = D.sources_index || {}, Ds = si.domains || [];
+    let s = `<title id="g-title">Handoff graph for the night of ${esc(pretty(D.night))}</title>
+      <defs><filter id="glow" x="-50%" y="-50%" width="200%" height="200%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+      <radialGradient id="rg" cx="50%" cy="50%" r="50%"><stop offset="0" stop-color="#0b2a36" stop-opacity=".55"/><stop offset="1" stop-color="#05070a" stop-opacity="0"/></radialGradient></defs>`;
+    const R = L.ring;
+    s += `<circle cx="${R.cx}" cy="${R.cy}" r="${R.r + 30}" fill="url(#rg)"/><circle cx="${R.cx}" cy="${R.cy}" r="${R.r}" fill="none" stroke="#12212c" stroke-dasharray="1 5"/>`;
+    // domain dots around the ring (gap where the handoff path leaves the worker cluster)
+    const nD = Ds.length, a0 = (R.gap + R.span) * Math.PI / 180, a1 = (R.gap + 360 - R.span) * Math.PI / 180;
+    const gcd = (x, y) => y ? gcd(y, x % y) : x; let step = Math.max(1, Math.round(nD * 0.38)); while (nD > 1 && gcd(step, nD) !== 1) step++;
+    const pos = {}; Ds.forEach((d, i) => { const slot = nD > 1 ? (i * step) % nD : 0, a = nD > 1 ? a0 + (a1 - a0) * slot / (nD - 1) : Math.PI; pos[d.domain] = [R.cx + R.r * Math.cos(a), R.cy + R.r * Math.sin(a), a]; });
+    // filaments: one per real cited link, worker -> domain
+    let fil = "", li = 0;
+    const ownerCol = { cash: "#3ddc97", compass: "#22d3ee", scout: "#a78bfa", hal: "#f5b041" };
+    for (const j of D.jobs || []) {
+      const k = keyOf(j.owner); if (!P[k]) continue;
+      for (const x of j.sources || []) for (const u of x.urls) {
+        let h = ""; try { h = new URL(u).hostname.replace(/^www\./, ""); } catch (e) { continue; }
+        const p = pos[h]; if (!p) continue;
+        const bend = ((li * 37) % 11 - 5) / 22; li++;
+        fil += `<path class="fil" stroke="${ownerCol[k] || "#22d3ee"}" d="${curve(P[k], [p[0], p[1]], bend)}"><title>${esc(j.owner)} → ${esc(h)}</title></path>`;
+      }
+    }
+    s += `<g>${fil}</g>`;
+    s += Ds.map((d, i) => { const [x, y, a] = pos[d.domain], rr = 1.6 + Math.min(4, d.links * .55), lab = i < L.lab;
+      const tx = x + Math.cos(a) * 9, ty = y + Math.sin(a) * 9 + 3, anc = Math.cos(a) < -0.2 ? "end" : Math.cos(a) > 0.2 ? "start" : "middle";
+      return `<circle class="ddot" cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${rr.toFixed(1)}" fill="${d.links > 2 ? "#7be3f3" : "#3d7f91"}"><title>${esc(d.domain)}: ${d.links} link${d.links > 1 ? "s" : ""} (${esc(d.owners.join(", "))})</title></circle>${lab ? `<text class="dl" x="${tx.toFixed(1)}" y="${ty.toFixed(1)}" text-anchor="${anc}">${esc(d.domain)} ${d.links}</text>` : ""}`; }).join("");
+    // handoff edges
+    const edges = [];
+    for (const k of ["cash", "compass", "scout"]) { edges.push(["grok", k, 0.12]); edges.push([k, "hal", -0.12]); }
+    edges.push(["hal", "check", 0], ["check", "outbox", 0], ["outbox", "jeff", 0]);
+    let base = "", lit = "";
+    for (const [a, b, bend] of edges) {
+      const d = curve(P[a], P[b], bend), st = E[a + ">" + b] || "none";
+      base += `<path class="base" d="${d}"/>`;
+      if (st !== "none") lit += `<path class="e flow ${st}" d="${d}"><title>${esc(a)} → ${esc(b)}: ${st}</title></path>`;
+    }
+    base += `<path class="base" d="${L.selfHal}"/>`;
+    const hs = E["grok>hal"]; if (hs) lit += `<path class="e flow ${hs}" d="${L.selfHal}"><title>Grok Bot → Hal (Hal's own job): ${hs}</title></path>`;
+    s += `<g>${base}</g><g filter="url(#glow)">${lit}</g>`;
+    // nodes
+    const INI = { grok: "GB", hal: "HAL", cash: "$$", compass: "CP", scout: "SS", check: "5:30", outbox: "OUT", jeff: "JEF" };
+    for (const k of Object.keys(P)) {
+      const [x, y] = P[k], st = N[k] || "none", c = COL[st], [nm, role, s1, s2] = nodeText(k), sub = s1 + (s2 ? " · " + s2 : ""), r = k === "jeff" ? L.r + 3 : L.r;
+      const up = L.up[k], ty = up ? y - r - 34 : y + r + 15, sq = k === "jeff" || k === "outbox";
+      s += `<g class="nd ${st === "act" ? "active" : ""}" filter="url(#glow)"><title>${esc(nm)} (${esc(role)}): ${esc(sub)}</title>
+        ${sq ? `<rect class="halo" x="${x - r - 4}" y="${y - r - 4}" width="${2 * r + 8}" height="${2 * r + 8}" stroke="${c}"/><rect class="ring" x="${x - r}" y="${y - r}" width="${2 * r}" height="${2 * r}" stroke="${c}"/>`
+          : `<circle class="halo" cx="${x}" cy="${y}" r="${r + 5}" stroke="${c}"/><circle class="ring" cx="${x}" cy="${y}" r="${r}" stroke="${c}"/>`}
+        <text class="ini" x="${x}" y="${y}" fill="${c}" style="fill:${c}">${INI[k]}</text></g>
+        <text class="lbl" x="${x}" y="${ty}" text-anchor="middle">${esc(nm)}</text>
+        <text class="sl" x="${x}" y="${ty + 12}" text-anchor="middle">${esc(s1)}</text>${s2 ? `<text class="sl" x="${x}" y="${ty + 23}" text-anchor="middle">${esc(s2)}</text>` : ""}`;
+    }
+    svg.innerHTML = s;
+    $("g-sub").textContent = `night ${pretty(D.night)} · ${(D.jobs || []).length} jobs · ${si.total_links || 0} cited links → ${Ds.length} domains`;
+    // stage strip from the run log, with explicit empty states
+    const r = runFor(D.night), want = ["plan", "hal_review", "dispatch", "compile", "check", "brief"];
+    $("stages").innerHTML = want.map(k => { const x = r && r.sections.find(s => s.kind === k);
+      const t = k === "dispatch" && x && x.body_times && x.body_times[0] ? x.body_times[0] : k === "check" && D.check_time ? D.check_time : (x && x.time);
+      return x ? `<span class="stg"><span class="tm">${esc(t || "—")}</span> ${esc(KL[k])}</span>` : `<span class="stg miss">${esc(KL[k])}: not run yet</span>`; }).join("") +
+      `<span class="stg">${aw ? `<span class="am">gate</span> ${aw} awaiting Jeffrey` : "gate: nothing awaiting"}</span>`;
+    $("legend").innerHTML = `<span><i style="border-color:#3ddc97"></i>approved path</span><span><i style="border-color:#22d3ee"></i>dispatched / running</span><span><i style="border-color:#f5b041"></i>waiting (review or Jeffrey)</span><span><i style="border-color:#7f93a4;border-top-style:dashed"></i>queued</span><span><i style="border-color:#ff5d6c"></i>rejected</span><span>hairlines = one per cited source link, colored by bot</span>`;
+  }
+
+  /* ---------------- wiring ---------------- */
+  function render() {
+    renderBar(); renderBrief(); renderSources(); renderRules(); renderBudget(); renderPrior();
+    renderGraph(); renderPlanner(); renderJobs(); renderSrcIdx(); renderRunlog(); renderDispatch(); renderGate();
+    if (!$("drawer").hidden) renderSheet();
+  }
+  document.addEventListener("click", e => {
+    const t = e.target.closest("[data-sheet],[data-close],[data-rl],#open-sheet"); if (!t || !D) return;
+    if (t.id === "open-sheet") openSheet(0);
+    else if (t.hasAttribute("data-close")) closeSheet();
+    else if (t.hasAttribute("data-rl")) { rlDate = t.getAttribute("data-rl"); renderRunlog(); }
+    else if (t.hasAttribute("data-sheet")) { if ($("drawer").hidden) openSheet(+t.getAttribute("data-sheet")); else { sheetIdx = +t.getAttribute("data-sheet"); renderSheet(); } }
+  });
+  document.addEventListener("keydown", e => { if (e.key === "Escape" && !$("drawer").hidden) closeSheet(); });
+  let rz = null, lastW = 0;
+  window.addEventListener("resize", () => { clearTimeout(rz); rz = setTimeout(() => { const w = $("gwrap").clientWidth; if (D && Math.abs(w - lastW) > 40) { lastW = w; renderGraph(); } }, 150); });
   async function load() {
     try {
       const r = await fetch("data.json?t=" + Date.now(), { cache: "no-store" });
       if (!r.ok) throw new Error("HTTP " + r.status);
       const d = await r.json();
-      if (!D || d.built_at_iso !== D.built_at_iso) { D = d; if (!replaying) render(); }
+      if (!D || d.built_at_iso !== D.built_at_iso) { D = d; render(); lastW = $("gwrap").clientWidth; if (location.hash === "#sheet" && $("drawer").hidden) openSheet(0); }
     } catch (e) {
-      if (!D) $("meta").textContent = "Could not load the board snapshot (" + e.message + ").";
+      if (!D) $("b-night").textContent = "Could not load the board snapshot (" + e.message + ")";
     }
   }
-  $("replay").addEventListener("click", replay);
-  load();
-  setInterval(load, 5 * 60 * 1000);
-  setInterval(() => { tickClock(); if (D && !replaying) liveScene(); }, 30 * 1000);
+  tickClock(); setInterval(tickClock, 1000);
+  load(); setInterval(load, 5 * 60 * 1000);
 })();

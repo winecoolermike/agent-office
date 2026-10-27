@@ -1,6 +1,6 @@
 {
- "built_at": "Tue Oct 27, 2026 11:02 AM PT",
- "built_at_iso": "2026-10-27T11:02:26-07:00",
+ "built_at": "Tue Oct 27, 2026 12:33 PM PT",
+ "built_at_iso": "2026-10-27T12:33:49-07:00",
  "board_newest_change": "2026-10-27 06:41:17 PT",
  "night": "2026-10-26",
  "expected_night": "2026-10-26",
@@ -578,28 +578,36 @@
    "owner": "Cash Money",
    "status": "approved",
    "date": "2026-10-25",
-   "priority": 1
+   "priority": 1,
+   "calls_used": 8,
+   "links": 0
   },
   {
    "id": "001-2026-10-25-2",
    "owner": "Compass",
    "status": "approved",
    "date": "2026-10-25",
-   "priority": 1
+   "priority": 1,
+   "calls_used": 28,
+   "links": 0
   },
   {
    "id": "001-2026-10-25-4",
    "owner": "Hal",
    "status": "approved",
    "date": "2026-10-25",
-   "priority": 1
+   "priority": 1,
+   "calls_used": 17,
+   "links": 0
   },
   {
    "id": "001-2026-10-25-3",
    "owner": "SiteScout",
    "status": "approved",
    "date": "2026-10-25",
-   "priority": 2
+   "priority": 2,
+   "calls_used": 23,
+   "links": 0
   }
  ],
  "with_checker": [],
@@ -766,6 +774,323 @@
    "awaiting_jeffrey": true,
    "markdown": "# This Week prep: Mon Oct 26, 2026 session\n**Status: awaiting Jeffrey.** This is analysis only. No trades, sends, or posts.\nHal compiled it Mon Oct 26, about 1:15 AM PT, and updated it about 4:50 AM PT with Verizon's Q3 release, from board jobs 001-2026-10-25-1 (Cash Money), -2 (Compass), and -3 (SiteScout). Prices are Friday Oct 23 closes from the [Yahoo chart API](https://query1.finance.yahoo.com/v8/finance/chart/SPY?interval=1d&range=1y). No premarket data was available when this was compiled.\n\n## The setup in one paragraph\nBloomberg reported Thursday night that SpaceX is in talks to access about 80,000 US cell sites for Starlink Mobile. This is anonymously sourced and no lease has been announced ([Yahoo/Bloomberg](https://finance.yahoo.com/technology/articles/spacex-talks-access-80-000-213142634.html), [CNBC Oct 25](https://www.cnbc.com/2026/10/25/spacex-cell-sites-wireless-network.html)). On Friday, carriers sold off and tower stocks rallied (T -7.96%, TMUS -7.71%, CCI +9.06%, AMT +4.08%, SBAC +3.57%, per [FinanceFeeds](https://financefeeds.com/att-stock-down-7-96-percent-spacex-cell-sites/)). This week brings four events: VZ earnings Monday, AMT Tuesday, TMUS and the Fed Wednesday, and an FCC meeting on satellite and D2D spectrum Thursday ([FCC agenda](https://www.fcc.gov/October2026)).\n\n**Hal's read (inference):** This is a week of scheduled events. Most of the edge comes from letting each report land, then trading the reaction rather than guessing ahead of it. VZ's 4:00 AM PT release sets the tone for T and TMUS at the open.\n\n## Per ticker\nLevels and bias are Cash Money's. Indicators were chosen per chart: VWAP and the opening range on event days, EMA9/EMA20 on fast-trend names, the 200-day where price sits right at it, unfilled gaps, and ATR14 for expected range.\n\n| Ticker | Close | Support | Resistance | Next catalyst / earnings | Bias (Cash Money) |\n|---|---|---|---|---|---|\n| **SPCX** | 147.49 | 144.09 (Friday low), 143.2–145.4 shelf, 140.66, 135 (IPO price) | 149.2–150 (50-day plus Friday high), 150.95–152.5 (EMA9/EMA20), 154.26–156.93 gap | Up to 328.4M shares unlock Monday (**unverified**, from third-party trackers: [TipRanks](https://www.tipranks.com/news/spacex-stock-climbs-today-but-328-million-shares-are-about-to-be-unlocked)). FCC D2D meeting Thu Oct 29 ([FCC](https://www.fcc.gov/October2026)). Q3 already reported Oct 20 ([SEC EX-99](https://www.sec.gov/Archives/edgar/data/1181412/000162828026066482/spaceexplorationtechnologi.htm)). Next earnings estimated late Jan–Feb 2027 (**unverified**). | Neutral to bearish into the unlock. It only improves if it reclaims 150 above VWAP. |\n| **AMT** | 188.97 | 185.4–186.0, 182.78–185.44 gap, 177.1 (200-day) | 194.0, 193.6–196.1, 200, 202.50 (52-week high) | **Earnings Tue Oct 27**, 4:00 AM PT, call 5:30 AM PT ([AMT IR](https://americantower.gcs-web.com/news-releases/news-release-details/american-tower-plans-third-quarter-2026-earnings-release-and)). It's the first chance to hear AMT on SpaceX. | Bullish above 185.4. Don't hold a swing into Tuesday's print. |\n| **CCI** | 85.97 | 85.00, 83.26, 82.2–82.7 (200-day) | 88.7, 91.45, 91.3–92.8 wall, 99.21 | Q3 reported Oct 21; FY26 guidance raised a bit, AFFO/share midpoint $4.60 ([CCI IR](https://investor.crowncastle.com/news-releases/news-release-details/crown-castle-reports-third-quarter-2026-results-and-updates)). Q4 dividend declaration estimated early Nov (**estimated**, based on [dividend history](https://investor.crowncastle.com/stock-information/dividend-history)). Named in the SpaceX talks. | Bullish while above 82.2. Don't chase; prefer a pullback that holds 83.3–85 after AMT reports. |\n| **SBAC** | 184.75 | 181.0–181.6, 178.99–181.05 gap, 177.3 | 186.1–188.2, 190.3 (200-day), 196.84 | **Earnings Mon Nov 2** after the close, call 2:00 PM PT ([SBAC IR](https://ir.sbasite.com/English/news-events/press-releases/news-details/2026/SBA-Communications-Corporation-Sets-Date-for-Third-Quarter-2026-Earnings-Release/default.aspx)). The dividend is likely declared with the report (**estimated**). | Neutral. It's below the 200-day and trades thin, around 0.94M shares a day. |\n| **VZ** | 44.66 | 43.43, 43.0, 41.87, 40.76–40.81 | 45.08–45.29, 45.58, 46.16–46.58, 46.72 (200-day) | **Earnings today**, release 4:00 AM PT, webcast 5:30 AM PT ([Verizon](https://www.verizon.com/about/news/verizon-q3-2026-earnings-report-date)). Consensus was about $1.27 EPS on $34.8B revenue ([MarketBeat](https://www.marketbeat.com/earnings/reports/2026-10-26-verizon-communications-inc-stock/)). **Reported Q3 this morning** ([Verizon EX-99, SEC 8-K](https://www.sec.gov/Archives/edgar/data/732712/000073271226000049/a2026q3exhibit99.htm)): adjusted EPS $1.31 (GAAP $1.25), revenue $34.3B, 406K postpaid phone net adds, churn 0.94%. FY26 guidance raised: adjusted EPS $5.04–5.06, postpaid phone net adds 1.1–1.2M, FCF growth approaching 12%. See VZ Q3 section below. | Neutral and event-driven; act only after the report. Watch for a break of the opening range above 45.60, above VWAP, on at least twice normal volume. |\n| **T** | 20.93 | 20.92, 20.25–20.62, 20.00, 19.89 (52-week low) | 21.41–21.79, 21.96–22.21, 22.21–22.74 gap, 22.63 (EMA9) | Q3 reported Oct 21. Adjusted EPS of $0.65 beat; 2026 EPS guidance raised to about $2.40 ([AT&T](https://about.att.com/story/2026/3q-earnings.html)). The $0.2775 dividend is payable Nov 2. Next earnings estimated late Jan 2027 (**estimated**). | Bearish: below all moving averages, with a selloff on 2.5 times normal volume. No long setup. |\n| **TMUS** | 146.54 | 146.32 (52-week low); 145 and 140 are only round numbers (**unverified** as support) | 147.9–149.6, 154.82–155.44 gap, 155.4 (EMA9), 158.79 | **Earnings Wed Oct 28**, release about 1:05 PM PT ([T-Mobile IR](https://investor.t-mobile.com/news-releases/news-release-details/t-mobile-host-q3-2026-earnings-call-october-28-2026)). Dividend raised 15% to $1.17, record date Nov 25 ([T-Mobile](https://www.t-mobile.com/news/business/t-mobile-announces-q4-2026-dividend-increase)). | Bearish. No trade before Wednesday's print. |\n\n## VZ Q3 2026 results (added 4:50 AM PT)\nSource: Verizon's press release filed as Exhibit 99 to today's 8-K ([EX-99](https://www.sec.gov/Archives/edgar/data/732712/000073271226000049/a2026q3exhibit99.htm), [filing index](https://www.sec.gov/Archives/edgar/data/732712/000073271226000049/0000732712-26-000049-index.htm)).\n- Adjusted EPS $1.31, up 8.3% y/y; GAAP EPS $1.25, up 6.8%.\n- Total operating revenue $34.3B, up 1.5% y/y. Mobility and broadband service revenue $23.5B, up 2.9%; equipment revenue down 9.0% on fewer upgrades and lower subsidies.\n- Postpaid phone net adds 406,000 (best Q3 in five years); postpaid net accounts +137,000; postpaid phone churn 0.94%, down 4 bps y/y. Broadband net adds 314,000 (159K fixed wireless, 155K fiber).\n- Adjusted EBITDA $13.8B, up 8.0%, margin 40.2%. Q3 free cash flow $7.8B, up 12.1%.\n- Signed a $2.0B+ AI infrastructure agreement with AWS.\n- **Guidance raised (third straight quarter):** FY26 adjusted EPS $5.04–5.06 (7.0–7.5% growth, from 6.0–7.0%); postpaid phone net adds 1.1–1.2M (from upper half of 750K–1.0M); operating cash flow growth 3.5–5.0% (from 2.0–4.0%); FCF growth approaching 12% (from 9–10%); service revenue growth in the upper half of 2.5–3.0%, about 4% in Q4. Capex unchanged at $16.0–16.5B.\n- Versus the MarketBeat consensus above: adjusted EPS beat ($1.31 vs about $1.27) and revenue came in under ($34.3B vs about $34.8B). That comparison is Hal's arithmetic on the two sourced figures.\n- The release does not mention SpaceX, Starlink, or the cell-site talks. Premarket price reaction was not checked in this run (**unverified**); Cash Money's VZ levels and bias above were set before the report and were not updated.\n\n## Cross-cutting this week\n- **Fed decision Wed Oct 28.** About 90% odds of a hold, and BofA calls for a 25bp hike. Rate-sensitive tower REITs and high-dividend telecoms are the exposed names ([CNBC](https://www.cnbc.com/2026/10/25/stock-market-today-live-updates.html)).\n- **Brazil:** EWZ fell about 18–20% overnight after the runoff, and AMT and SBAC have large Latin America exposure ([CNBC](https://www.cnbc.com/2026/10/25/stock-market-today-live-updates.html)). This may weigh on the towers Monday (inference).\n- **SPCX:** Musk says SpaceX \"closed\" $40B of mostly callable GPU debt; Reuters says the terms are unclear ([Investing/Reuters](https://www.investing.com/news/stock-market-news/musk-says-spacex-raised-40-billion-in-debt-for-gpus-4971248)).\n- **Futures** were slightly green Sunday night: S&P +0.25% ([CNBC](https://www.cnbc.com/2026/10/25/stock-market-today-live-updates.html)).\n\n## Unverified / caveats\n- The SpaceX cell-site story is anonymously sourced talks, not a deal, and the Bloomberg original wasn't opened directly.\n- The SPCX unlock share counts come from third-party trackers and Stocktwits, not the prospectus.\n- X claims that CCI rose 11.6–15.7% Friday conflict with the +9.06% close.\n- An Alphastreet VZ preview price of $41.29 conflicts with Yahoo's $44.66 and was treated as stale.\n- Round-number supports aren't tested shelves.\n\n## Tool calls used tonight\n| Bot | Calls | Budget |\n|---|---|---|\n| Cash Money | 8 | 40 |\n| Compass | 28 | 40 |\n| SiteScout | 23 | 40 |\n| Hal (compile) | 17 (6 at 1:15 AM + 11 at 4:50 AM) | 40 |\nSpend: $0.\n"
   }
+ ],
+ "history": [
+  {
+   "date": "2026-10-25",
+   "jobs": 4,
+   "status": {
+    "approved": 4
+   },
+   "calls": {
+    "grok": null,
+    "hal": 17,
+    "cash": 8,
+    "compass": 28,
+    "scout": 23,
+    "check": null
+   },
+   "total_calls": 76,
+   "links": 0,
+   "run_file": "runs/2026-10-25.md",
+   "run_sections": 7,
+   "spend_values": [
+    "0"
+   ]
+  },
+  {
+   "date": "2026-10-26",
+   "jobs": 4,
+   "status": {
+    "approved": 4
+   },
+   "calls": {
+    "grok": null,
+    "hal": 12,
+    "cash": 9,
+    "compass": 23,
+    "scout": 28,
+    "check": null
+   },
+   "total_calls": 72,
+   "links": 62,
+   "run_file": "runs/2026-10-26.md",
+   "run_sections": 6,
+   "spend_values": [
+    "0"
+   ]
+  }
+ ],
+ "sources_index": {
+  "night": "2026-10-26",
+  "total_links": 62,
+  "source_entries": 68,
+  "unlinked_entries": 7,
+  "per_job": [
+   {
+    "id": "001-2026-10-26-1",
+    "owner": "Cash Money",
+    "links": 13,
+    "entries": 15
+   },
+   {
+    "id": "001-2026-10-26-2",
+    "owner": "Compass",
+    "links": 16,
+    "entries": 16
+   },
+   {
+    "id": "001-2026-10-26-4",
+    "owner": "Hal",
+    "links": 4,
+    "entries": 7
+   },
+   {
+    "id": "001-2026-10-26-3",
+    "owner": "SiteScout",
+    "links": 29,
+    "entries": 30
+   }
+  ],
+  "domains": [
+   {
+    "domain": "sec.gov",
+    "links": 8,
+    "owners": [
+     "Compass",
+     "Hal",
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "investing.com",
+    "links": 7,
+    "owners": [
+     "Cash Money",
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "x.com",
+    "links": 6,
+    "owners": [
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "query1.finance.yahoo.com",
+    "links": 5,
+    "owners": [
+     "Cash Money",
+     "Hal",
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "verizon.com",
+    "links": 5,
+    "owners": [
+     "Cash Money",
+     "Compass",
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "americantower.gcs-web.com",
+    "links": 3,
+    "owners": [
+     "Cash Money",
+     "Compass",
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "federalreserve.gov",
+    "links": 2,
+    "owners": [
+     "Compass"
+    ]
+   },
+   {
+    "domain": "insidetowers.com",
+    "links": 2,
+    "owners": [
+     "Cash Money",
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "investor.t-mobile.com",
+    "links": 2,
+    "owners": [
+     "Compass"
+    ]
+   },
+   {
+    "domain": "247wallst.com",
+    "links": 1,
+    "owners": [
+     "Cash Money"
+    ]
+   },
+   {
+    "domain": "bnamericas.com",
+    "links": 1,
+    "owners": [
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "capitalsnitch.com",
+    "links": 1,
+    "owners": [
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "cnbc.com",
+    "links": 1,
+    "owners": [
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "communicationsdaily.com",
+    "links": 1,
+    "owners": [
+     "Cash Money"
+    ]
+   },
+   {
+    "domain": "data.sec.gov",
+    "links": 1,
+    "owners": [
+     "Hal"
+    ]
+   },
+   {
+    "domain": "datacenterdynamics.com",
+    "links": 1,
+    "owners": [
+     "Cash Money"
+    ]
+   },
+   {
+    "domain": "docs.fcc.gov",
+    "links": 1,
+    "owners": [
+     "Compass"
+    ]
+   },
+   {
+    "domain": "etf.com",
+    "links": 1,
+    "owners": [
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "exa.ai",
+    "links": 1,
+    "owners": [
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "exame.com",
+    "links": 1,
+    "owners": [
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "fcc.gov",
+    "links": 1,
+    "owners": [
+     "Compass"
+    ]
+   },
+   {
+    "domain": "finance.yahoo.com",
+    "links": 1,
+    "owners": [
+     "Cash Money"
+    ]
+   },
+   {
+    "domain": "investor.crowncastle.com",
+    "links": 1,
+    "owners": [
+     "Compass"
+    ]
+   },
+   {
+    "domain": "ir.sbasite.com",
+    "links": 1,
+    "owners": [
+     "Compass"
+    ]
+   },
+   {
+    "domain": "protos.com",
+    "links": 1,
+    "owners": [
+     "Compass"
+    ]
+   },
+   {
+    "domain": "rcrwireless.com",
+    "links": 1,
+    "owners": [
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "riotimesonline.com",
+    "links": 1,
+    "owners": [
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "stockstory.org",
+    "links": 1,
+    "owners": [
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "thedesk.net",
+    "links": 1,
+    "owners": [
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "thenextweb.com",
+    "links": 1,
+    "owners": [
+     "SiteScout"
+    ]
+   },
+   {
+    "domain": "tipranks.com",
+    "links": 1,
+    "owners": [
+     "SiteScout"
+    ]
+   }
+  ]
+ },
+ "rules": [
+  "Use whatever tools, data sources, indicators, and methods best fit each job, and note why. Never use something just because Jeffrey mentioned it.",
+  "Only Hal edits the queue below. Workers update only their own job file in `jobs/`.",
+  "Job status flow: queued -> running -> needs_review -> approved | rejected.",
+  "Nothing is sent, posted, traded, or bought. Anything meant to go out goes to `outbox/` marked \"awaiting Jeffrey\".",
+  "Trading work is analysis or paper only. Use any indicator (EMA9, VWAP, or anything else) when it is the best fit; never adopt one blindly just because Jeffrey asked about it.",
+  "Cite every claim with a link; mark anything unverified.",
+  "Budget: max 40 tool calls per bot per night, $0 spend. At 80% used, only priority-1 jobs continue.",
+  "Each night's log goes in `runs/<YYYY-MM-DD>.md`."
  ],
  "budget": [
   {
