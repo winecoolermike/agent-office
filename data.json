@@ -1,9 +1,9 @@
 {
- "built_at": "Tue Oct 27, 2026 6:12 PM PT",
- "built_at_iso": "2026-10-27T18:12:19-07:00",
- "board_newest_change": "2026-10-27 18:05:36 PT",
- "night": "2026-10-26",
- "expected_night": "2026-10-26",
+ "built_at": "Tue Oct 27, 2026 11:07 PM PT",
+ "built_at_iso": "2026-10-27T23:07:09-07:00",
+ "board_newest_change": "2026-10-27 23:01:51 PT",
+ "night": "2026-10-27",
+ "expected_night": "2026-10-27",
  "missing_night": null,
  "caps": {
   "calls": 40,
@@ -49,36 +49,36 @@
    "role": "Chief of Staff: plans, compiles, writes the brief",
    "key": "hal",
    "jobs": [
-    "001-2026-10-26-4"
+    "001-2026-10-27-4"
    ],
-   "status": "approved"
+   "status": "queued"
   },
   {
    "name": "Cash Money",
    "role": "Worker: levels, bias, analysis",
    "key": "cash",
    "jobs": [
-    "001-2026-10-26-1"
+    "001-2026-10-27-1"
    ],
-   "status": "approved"
+   "status": "queued"
   },
   {
    "name": "Compass",
    "role": "Worker: catalysts, earnings dates, filings",
    "key": "compass",
    "jobs": [
-    "001-2026-10-26-2"
+    "001-2026-10-27-2"
    ],
-   "status": "approved"
+   "status": "queued"
   },
   {
    "name": "SiteScout",
    "role": "Worker: news and X scan",
    "key": "scout",
    "jobs": [
-    "001-2026-10-26-3"
+    "001-2026-10-27-3"
    ],
-   "status": "approved"
+   "status": "queued"
   },
   {
    "name": "5:30 Check",
@@ -90,485 +90,126 @@
  ],
  "dispatch": [
   {
-   "time": "11:10 PM",
+   "time": "11:05 PM",
    "what": "plan: writes tonight's jobs"
-  },
-  {
-   "time": "1:08 AM",
-   "what": "hands jobs to workers"
   }
  ],
- "check_time": "5:40 AM",
+ "check_time": null,
  "jobs": [
   {
-   "id": "001-2026-10-26-1",
-   "file": "jobs/001-2026-10-26-1.json",
-   "date": "2026-10-26",
+   "id": "001-2026-10-27-1",
+   "file": "jobs/001-2026-10-27-1.json",
+   "date": "2026-10-27",
    "owner": "Cash Money",
    "priority": 1,
-   "status": "approved",
-   "task": "Refresh support/resistance levels and a one-line bias for every This Week ticker (SPCX, AMT, CCI, SBAC, VZ, T, TMUS) for the Tue Oct 27, 2026 session, using Monday Oct 26's completed session bars. Re-do VZ now that Q3 is out (last night's VZ levels predate the report). AMT reports Tue 4:00 AM PT: give pre-print levels and say which levels matter on a gap either way. Pick indicators on merit per chart and note why. Analysis only, no trades. Mark anything unsourced as unverified.",
-   "calls_used": 9,
+   "status": "queued",
+   "task": "Refresh support/resistance and a one-line bias for every This Week ticker (SPCX, AMT, CCI, SBAC, VZ, T, TMUS) for the Wed Oct 28, 2026 session, off Tuesday Oct 27's completed bars. Re-do AMT post-Q3 (Tuesday was the reaction day). TMUS reports Wed ~1:05 PM PT after the FOMC statement (11:00 AM PT): give pre-print TMUS levels and which levels matter on a move either way; flag Fed-day risk for all seven. SPCX: Tuesday was the last day of the Mon/Tue window, so restate the plan. Pick indicators on merit per chart and note why. Analysis only, no trades. Mark anything unverified. Save data under [path]. Compute test: Jeffrey is weighing whether this work is worth the compute, so aim for 15 calls or fewer. Reuse Tuesday's saved bars where possible, and in evidence note calls used and which levels actually held or broke Tuesday versus last night's sheet (a simple hit-rate check).",
+   "calls_used": 0,
    "usd_spent": null,
-   "next_step": "6:30 AM brief.",
-   "updated": "2026-10-27T05:40:00-07:00",
-   "review": "Approved by 5:30 AM checker. Levels/bias for all 7 tickers off Mon Oct 26 bars, VZ redone post-Q3, AMT gap-up/gap-down map; every indicator choice has a stated reason (and where it was skipped and why). Spot-check: saved VZ_d.json Oct 26 bar O/H/L/C 43.49/43.84/42.47/43.10, vol 45.21M matches the evidence; data files and an2.py exist. Caveat carried: Tue PMH/PML not formed at pull time; SPCX unlock count now confirmed by Compass.",
+   "next_step": "1 AM workers step hands this off",
+   "updated": "2026-10-27T23:05:00-07:00",
+   "review": null,
    "result": null,
    "sources": [
     {
-     "label": "Yahoo chart API daily 6mo:  for T in SPCX, AMT, CCI, SBAC, VZ, T, TMUS, SPY; saved {T}_d.json",
-     "urls": [
-      "https://query1.finance.yahoo.com/v8/finance/chart/{T}?interval=1d&range=6mo"
-     ]
-    },
-    {
-     "label": "Yahoo chart API 5m/5d pre+post:  for the same tickers; saved {T}_5m.json",
-     "urls": [
-      "https://query1.finance.yahoo.com/v8/finance/chart/{T}?interval=5m&range=5d&includePrePost=true"
-     ]
-    },
-    {
-     "label": "Prior 1y daily (for the 200d) and TMUS 5y weekly: {T}_d.json, TMUS_w.json",
+     "label": "Yahoo chart API / Webull bars (read-only",
      "urls": []
     },
     {
-     "label": "Computation script: an2.py; news notes: news_notes.md",
+     "label": "Prior levels in jobs/001-2026-10-26-1.json",
      "urls": []
-    },
-    {
-     "label": "VZ Q3 IR",
-     "urls": [
-      "https://www.verizon.com/about/news/verizon-delivers-another-record-breaking-quarter"
-     ]
-    },
-    {
-     "label": "VZ Q3 PDF",
-     "urls": [
-      "https://www.verizon.com/about/sites/default/files/verizon-3Q26-earnings-press-release.pdf"
-     ]
-    },
-    {
-     "label": "VZ reaction/estimates",
-     "urls": [
-      "https://www.investing.com/news/stock-market-news/why-is-verizon-stock-sliding-today-93CH-4973002"
-     ]
-    },
-    {
-     "label": "VZ call summary",
-     "urls": [
-      "https://www.investing.com/news/transcripts/earnings-call-transcript-verizon-beats-q3-2026-eps-misses-revenue-93CH-4972964"
-     ]
-    },
-    {
-     "label": "VZ early-trade price 42.72",
-     "urls": [
-      "https://247wallst.com/investing/2026/10/26/verizon-falls-4-as-revenue-miss-overshadows-raised-outlook-att-and-t-mobile-hold-steady/"
-     ]
-    },
-    {
-     "label": "Tower talks status",
-     "urls": [
-      "https://insidetowers.com/spacex-talks-of-80000-sites-continues-boost-to-tower-market/"
-     ]
-    },
-    {
-     "label": "Tower talks/AMT Tuesday test",
-     "urls": [
-      "https://finance.yahoo.com/markets/article/spacex-wants-to-be-americas-fourth-phone-carrier--tower-owners-are-cashing-in-162059593.html"
-     ]
-    },
-    {
-     "label": "BNP on SpaceX MLAs",
-     "urls": [
-      "https://www.investing.com/news/stock-market-news/bnp-paribas-comemnts-on-spacex-talks-with-tower-firms-93CH-4972047"
-     ]
-    },
-    {
-     "label": "CCI Q3/CEO",
-     "urls": [
-      "https://communicationsdaily.com/article/2026/10/26/crown-castles-stock-price-rises-on-spacex-speculation-2610230035?BC=bc_62e08b3d2ab75",
-      "https://www.datacenterdynamics.com/en/news/crown-castle-bullish-on-carrier-spectrum-deployment-says-it-can-support-spacexs-terrestrial-dreams/"
-     ]
-    },
-    {
-     "label": "Plan referenced: telecom-week-2026-10-26.md; Monday notes: swing-log.md",
-     "urls": []
-    },
-    {
-     "label": "AMT timing (from prior job",
-     "urls": [
-      "https://americantower.gcs-web.com/news-releases/news-release-details/american-tower-plans-third-quarter-2026-earnings-release-and"
-     ]
     }
    ],
-   "evidence": "Cash Money levels for Tue Oct 27, 2026 (PT). ANALYSIS ONLY, no trades. Data: Yahoo v8 chart API, daily 6mo + 5m/5d with pre/post, pulled Tue Oct 27 ~1:09 AM PT and saved to {TICKER}_d.json and {TICKER}_5m.json (SPY too). Last completed session = Mon Oct 26 (regularMarketTime 1:00 PM PT). 200d SMA uses the 6mo pull merged with the prior 1y files in {TICKER}_d.json. SMA/EMA/ATR14/VWAP/opening range/volume nodes computed by Cash Money with an2.py (VWAP = Monday RTH 5m typical-price VWAP; OR = first 15/30 min; volume nodes = 5-day RTH 5m volume by price bin). News notes with URLs: news_notes.md.\nPMH/PML CAVEAT: Tuesday premarket began at 1:00 AM PT, and only 2-3 bars existed at pull time, so Tue PMH/PML are NOT formed yet. The 'Tue pre' values below are what had printed as of ~1:09 AM PT. Hal or the checker should refresh them after 4:00 AM PT (AMT print). Yahoo premarket bars have no volume.\nDATA ARTIFACT: Yahoo SPY 5m shows after-hours lows of 722.19 (Mon 1:55 PM PT) and 728.67 (Fri). These are bad ticks, about 5% off the tape, and are ignored.\nTAPE: SPY Mon O/H/L/C 762.25/767.73/761.63/765.37 (+0.71%, 0.77x 50d vol). It is below EMA9 767.09, 20d 770.14 and 50d 767.59, and above 200d 727.39. It held Fri low 758.68. Light-volume bounce with no trend change. Tue pre 763.96-766.23 so far.\nINDICATOR CHOICES (by chart, on merit):\n- VWAP + opening range: AMT (earnings day), VZ (day 2 after earnings), CCI/SBAC (AMT sympathy risk), SPCX (post-unlock supply). These are intraday event days, and VWAP shows who owns the open. All five closed Monday BELOW VWAP, which is useful information. Not used as a primary tool on T (no catalyst, trend name).\n- EMA9/EMA20: SPCX (the EMA9 150.14 sits inside the trigger cluster), T, TMUS, VZ (clean downtrends where the fast MAs mark overhead). Not used on CCI/AMT, where the EMAs are far below price and say nothing about Tuesday.\n- 200d SMA: CCI (82.24 sits under the plan stop), SBAC (190.33 caps Monday's high), AMT (177.16 = deep gap-down floor), VZ (46.74 overhead). SPCX has no 200d (IPO Jun 12). 50d: SPCX 149.38 (trigger), SBAC 179.12, VZ 47.44.\n- Unfilled gaps: AMT 182.78-185.44, CCI 80.40-85.00, SBAC 178.99-181.05, SPCX 154.26-156.93, TMUS 154.82-155.44, T 22.21-22.74, VZ close-gap 43.84-44.66. Fresh gaps work as magnets and as S/R.\n- 5-day volume nodes: used where the profile is concentrated (VZ 43.34, CCI 88.22, AMT 188.0-189.9 and 181.4, SPCX 147.6, TMUS 146.5/153.6). Skipped on T, where the nodes are spread across the range.\n- ATR14 for the expected range (and AMT gap sizing). Round numbers only where no tested shelf exists (TMUS 145/140, T 20, AMT 200), marked as untested.\nPER TICKER (levels ordered nearest first; higher timeframe noted):\nSPCX: Mon O/H/L/C 146.84/150.24/144.57/146.90 (-0.4%), vol 102.8M = 1.11x 50d. VWAP 147.86 (closed below). OR30 147.83/144.57. Post-market 146.90-148.07, last 147.98. Tue pre so far 146.84-147.70. Indicators: VWAP/OR, EMA9 150.14, EMA20 151.93, 50d 149.38, 20d 155.09, ATR14 8.00. RESISTANCE: 147.6-148.1 (VWAP + 5d volume node + post-market high), 149.4-150.24 (50d + EMA9 150.14 + PDH 150.24 + Fri high 149.75 = main cluster), 151.9 (EMA20), 154.26-156.93 (unfilled island gap), 158.1-159.8, 166.18 (prior-week high). SUPPORT: 144.57 (PDL), 143.2-144.1 (Oct 22 low / Fri low shelf = prior-week low 143.21), 140.66 (Oct 15 low), 135 (IPO price). Unlock read: Monday's 328M-share unlock day (share count still unverified; Compass job -2 is checking it) printed no breakdown. Volume was only 1.11x, and the low 144.57 held above 143.2. BIAS: Neutral. Supply was absorbed, but price was rejected 1c under the trigger (150.24) and closed under VWAP. SCORE 6 = NO TRADE until a daily close above 150.25; that close upgrades it to 7 WATCH if volume is >= 50d avg (~92M). TRIGGER STATUS: the 'held 143.2' half is satisfied (Mon low 144.57). The 'close above 150.25' half is NOT met (Mon high 150.24, close 146.90). Plan unchanged; Tuesday is the last day of the plan's Mon/Tue window. Note that 150.25 is now also the PDH.\nAMT (reports Tue 4:00 AM PT, call 5:30 AM PT): Mon O/H/L/C 188.50/191.19/187.28/188.28 (-0.37%), vol 4.43M = 1.58x. Inside day within Fri 202.50/185.44. VWAP 189.30 (closed below). Mon premarket 186.0-190.2. Post-market 187.49-188.45, last 188.28. Indicators: VWAP/OR (earnings day), 200d 177.16, 20d 175.38, 50d 174.94, EMA9 182.96, ATR14 6.49 (a 1-ATR gap = ~181.8 or ~194.8), 5d volume nodes 188.0-189.9 and 181.4. PRE-REPORT LEVELS: R 189.3-189.9 (VWAP/node), 191.19 (PDH), 194.0-194.2 (Fri 30m swing high after the open fade), 196.1 (Feb/Jun 5 highs 196.08 wall, HTF), 200 (round), 202.50 (Fri high = 52w high, HTF). S 187.28 (PDL), 185.4-186.0 (Fri low 185.44 + Oct 16/19 highs 185.88/186.00), 182.78-185.44 (unfilled gap; 182.78 = Oct 22 high), 181.4 (volume node / Oct 22 range), 177.1-177.2 (Oct 21 low 177.10 + 200d 177.16, HTF), ~175 (20d/50d).\n GAP-UP map: first test is 191.19 (PDH), which must hold as support. Then 194.0-194.2, then the 196.1 HTF wall (the plan's T1), 200, and 202.50, where Friday's gap-and-fade supply sits. A gap into 196-202.5 is opening into supply: wait for the OR + VWAP hold and don't chase. Above 202.50 is a new 52w high with no 1y overhead; a gap of >=10% (>~207) is a no-chase per plan rules.\n GAP-DOWN map: 187.28 (PDL), then 185.4-186.0 (also the swing entry zone), 182.78 (gap bottom = plan invalidation on a daily close), 182.3 (plan GET-OUT), 181.4, and 177.1-177.2 (200d + Oct 21 low). An open under 182.78 fills the SpaceX gap. That means the market is rejecting the tower story, and the swing idea is off.\n SWING IDEA (entry 186-187, GET-OUT 182.3, T1 196.1, T2 202.5): Monday's bars DO NOT change it. It was an inside day that held above the entry zone. 182.3 is still under the 182.78 gap bottom. T1/T2 are still the Feb/Jun wall and the 52w high. From 186.5: risk 4.2, T1 ~2.3R, T2 ~3.8R (unchanged). One nuance: the entry zone now sits just under Monday's low of 187.28, so filling it means losing the PDL first. Still only valid after the print settles (Wed-Fri) with a hold/reclaim of 185.4-186. BIAS: Bullish above 185.4 structurally, event-binary for Tuesday. SCORE 6.5 = NO TRADE pre-print (no position into the print). Post-print, a Tuesday day trade needs the ORB break above VWAP with RVOL >= 2x while holding 186; the swing is 7 WATCH per plan only after the settle. AMT's Q3 headline/SpaceX commentary is NOT covered here; Hal pulls it at 4:45 AM.\nCCI: Mon O/H/L/C 86.00/89.05/86.00/87.47 (+1.74%), vol 7.52M = 1.84x. Opened on its low, peaked 89.05 at 6:45 AM PT, closed under VWAP 87.85. Post-market rose to 88.73 (last 88.73 at 4:45 PM PT; thin after-hours, cause unverified). Mon premarket 85.15-86.26. Indicators: 200d 82.24 (key HTF line under the stop), VWAP/OR (AMT sympathy day), 5d node 88.22, ATR14 3.99. RESISTANCE: 88.2-88.7 (node + post-market high), 89.05 (PDH), 91.45 (Fri high = prior-week high), 91.3-92.8 (Jan/Feb/Mar/May multi-touch wall; May 12 high 92.81), 93.8-95.07 (May 21/Jun 5 highs), 99.21 (52w high). SUPPORT: 86.0 (PDL/Mon open), 85.0-85.15 (Fri low + Mon PML), 83.26 (Oct 16 high), 82.24-82.72 (200d + Oct 13/19 highs), 80.40 (gap bottom). PLAN EFFECT: none. Monday did not pull back (low 86.00), so Setup A (pullback holding 83.26, entry 83.75-84.75, GET-OUT 81.9, T1 91.45 ~3R, T2 95.07 ~4.5R) is NOT triggered and stays as written. Monday made a higher low on 1.84x volume, which is constructive, but it faded from 89.05 under VWAP. Still wait until after AMT's print. BIAS: Bullish while above 82.2; don't chase toward 89-91. SCORE 7.5 = WATCH (unchanged; trigger = daily close holding 83.26 in the 83.3-85 zone, then a 1h close back above 85 while above VWAP).\nSBAC: Mon O/H/L/C 185.84/189.43/184.20/185.92 (+0.63%), vol 1.37M = 1.40x. Closed under VWAP 186.59. The high 189.43 poked through the 186.1-188.2 wall and failed under the 200d. Indicators: 200d 190.33 (main HTF overhead), 50d 179.12, VWAP/OR, ATR14 7.33. RESISTANCE: 186.1-188.2 (multi-touch wall incl. VWAP 186.6), 189.43 (PDH), 190.33 (200d), 192.4, 194.2, 196.84 (Fri high). SUPPORT: 184.2 (PDL), 181.05-181.6 (Fri low + Oct 15/19 lows), 178.99-179.1 (gap bottom + 50d), 177.3 (Oct 14 low). BIAS: Neutral. Below the 200d, thin liquidity, AMT sympathy, earnings Nov 2 after close. SCORE 6 = NO TRADE.\nVZ (redone post-Q3): Q3 (Mon pre-open): adj EPS $1.31 beat (~$1.28 est), revenue $34.31B missed (~$34.77B est), 406k postpaid phone net adds, FY guide raised (3rd straight quarter), $2B+ AWS deal [verizon.com IR + Investing.com, see sources]. Tape verdict: the revenue miss won. Mon O/H/L/C 43.49/43.84/42.47/43.10 (-3.49%), vol 45.2M = 1.96x. VWAP 43.32 (closed below). Mon premarket 44.14-46.20 (a spike to 46.20 right after the 4:00 AM PT release, then sold; Yahoo pre bars carry no volume). Post-market 43.09-43.50, last 43.23. Tue pre so far 43.29.\n LOW VERIFICATION: Hal's 42.47 is CONFIRMED. The Yahoo daily bar for 2026-10-26 has low 42.47, and the 5m RTH bar at 6:30 AM PT (opening 5 minutes) has low 42.47 (VZ_d.json / VZ_5m.json in [path]). It is corroborated by 24/7 Wall St quoting $42.72 'in early trading'. The afternoon retest low was 42.76 (10:30-11:00 AM PT), which held.\n Indicators: VWAP + OR (day 2 after earnings), EMA9 44.24 / EMA20 44.94 / 20d 44.72 (overhead stack), 50d 47.44, 200d 46.74, 5d node 43.34, ATR14 1.55. RESISTANCE: 43.32-43.45 (VWAP + node + Fri low 43.43), 43.84 (PDH), 44.14-44.24 (Mon PML + EMA9), 44.66-44.72 (Fri close = gap fill + 20d), 45.08-45.29 (prior-week highs), 46.20 (Mon PMH post-print spike), 46.74 (200d, HTF). SUPPORT: 42.76 (Mon afternoon swing low), 42.47 (PDL/opening low), 41.87 (Oct 12 low), 40.76-40.81 (Jul 2 + Oct 9 double low, HTF), 38.54 (52w low). Old plan status: the ORB-above-45.60 day trade never triggered, and the plan's 'loses 43.0' invalidation was hit. BIAS: Bearish-neutral. The beat-and-raise was sold, and it sits below all MAs and VWAP, but the 42.47 opening low held through the afternoon retest. A reclaim of 43.84 above VWAP would only re-open 44.66 (under 2:1). SCORE 5 = NO TRADE.\nT: Mon O/H/L/C 20.70/21.21/20.62/20.85 (-0.38%), vol 59.4M = 1.42x. Closed under VWAP 20.95. The low 20.62 = Jul 10 low (July shelf tested). Indicators: EMA9 22.27, EMA20 23.13, 20d 23.30, 52w low, round numbers, ATR14 0.91. RESISTANCE: 20.95-21.05 (VWAP/node), 21.21 (PDH), 21.41-21.79, 21.96-22.21 (Oct 9 low / Fri high), 22.21-22.74 (open gap), 22.27 (EMA9). SUPPORT: 20.62 (PDL = Jul 10 low), 20.25, 20.00 (round, untested), 19.89 (52w low, Jul 2). BIAS: Bearish (below all MAs; no reversal, just a lower low into the July shelf). SCORE 3 = NO TRADE.\nTMUS: Mon O/H/L/C 145.81/147.97/143.92/146.93 (+0.27%), vol 7.66M = 1.45x. The new 52w low 143.92 (7:20 AM PT) is the lowest price since the week of Oct 30, 2023 (old weekly file TMUS_w.json: weekly low 139.47 that week; Oct 2023 lows 136.85-136.92). It closed ABOVE VWAP 145.88 after a late rally, the only name of the seven to do so. Mon premarket 145.11-147.75. Indicators: EMA9 153.68, EMA20 158.15, VWAP, round numbers, ATR14 6.68. RESISTANCE: 147.9-147.97 (Oct 9 low + PDH), 149.58-149.6, 153.6-153.7 (node + EMA9), 154.82-155.44 (unfilled gap), 158.45-158.79 (20d/gap fill). SUPPORT: 145.88 (VWAP), 145.11 (Mon PML), 145 (round, untested), 143.92 (PDL/52w low), 140 (round, untested), 136.9-139.5 (Oct 2023 weekly lows, HTF; 3 years old, so relevance is unverified). BIAS: Bearish, with a first sign of intraday demand (close above VWAP). Earnings Wed Oct 28 after close. SCORE 3 = NO TRADE.\nPLAN CHANGES vs telecom-week-2026-10-26.md: none to the AMT swing, the CCI Setup A or the SPCX trigger (none triggered or invalidated). VZ's Monday ORB idea is retired (invalidated). The SPCX trigger window ends Tuesday per plan.\nNEWS CHECK: no signed SpaceX tower lease/MLA and no denial found as of Oct 26. Talks are still only reported (Bloomberg), and CCI's CEO said 'talking to all parties'. BNP: take-or-pay MLAs would be binding once signed. Nothing new is confirmed.\nUNVERIFIED / CAVEATS: SPCX unlock count (third-party, Compass verifying). CCI's after-hours lift to 88.73 has no identified cause and thin volume. Round-number supports (T 20, TMUS 145/140, AMT 200) are untested. TMUS Oct-2023 lows are of unverified relevance. Tue PMH/PML are not formed at pull time. Yahoo volume may differ from the consolidated tape. Investing.com lists VZ's 52w low as 38.68 vs Yahoo 38.54 (Yahoo used). Webull connector not tried (to save calls); Yahoo only.",
+   "evidence": null,
    "parse_error": null
   },
   {
-   "id": "001-2026-10-26-2",
-   "file": "jobs/001-2026-10-26-2.json",
-   "date": "2026-10-26",
+   "id": "001-2026-10-27-2",
+   "file": "jobs/001-2026-10-27-2.json",
+   "date": "2026-10-27",
    "owner": "Compass",
    "priority": 1,
-   "status": "approved",
-   "task": "Next catalyst and earnings date for each of SPCX, AMT, CCI, SBAC, VZ, T, TMUS, each labeled confirmed or estimated with a primary-source link (IR page or SEC filing). Carry forward what's still accurate from jobs/001-2026-10-25-2.json instead of redoing it. Priority: AMT Q3 (Tue 4:00 AM PT release, 5:30 AM PT call): if the release is out before 4:30 AM, pull headline numbers and guidance from the 8-K/IR release and any SpaceX/tower-lease commentary. Also confirm TMUS Wed Oct 28 timing, the Fed decision Wed, and the FCC Oct 29 agenda. Workers run from 1 AM, likely before AMT's 4:00 AM PT release, so don't wait for it: Hal's 4:45 AM compile pulls the AMT headline from the 8-K/IR release, as it did for VZ. Also try to verify the SPCX lock-up/unlock share count (328.4M was single-source last night) from the prospectus or an SEC filing; if not found, keep it marked unverified.",
-   "calls_used": 23,
+   "status": "queued",
+   "task": "Sourced catalysts/earnings dates for all 7 tickers for Wed Oct 28 onward. Confirm TMUS Q3 release/call times from T-Mobile IR; confirm FOMC statement/presser times (and the chair) on federalreserve.gov; confirm FCC Oct 29 agenda items (SCS/D2D, mid-band auction, 800 MHz). Pull any AMT call commentary on SpaceX/satellite from a transcript or reliable report (mark unverified if no primary). Check for new 8-Ks/Form 4s Tue Oct 27 for SPCX, AMT, CCI, SBAC. Primary sources preferred; cite every claim.",
+   "calls_used": 0,
    "usd_spent": null,
-   "next_step": "6:30 AM brief.",
-   "updated": "2026-10-27T05:40:00-07:00",
-   "review": "Approved by 5:30 AM checker. All catalysts/earnings dated and labeled confirmed/estimated with primary links. Spot-checks: SPCX 424B4 contains '328.4 million', '455.8 million', '797.6 million' (unlock count now primary-verified); SPCX Oct 26 8-K mentions Apollo and $40B; federalreserve.gov calendar shows Oct 27-28; FCC tentative agenda PDF (DOC-425708A1) loads and mentions SCS/1675 MHz (fcc.gov/October2026 returns 403 to scripts, bot block, not a dead link). Still unverified and labeled: 455.8M non-trigger (news only), CCI Form 144 details, T Oct 16 8-K.",
+   "next_step": "1 AM workers step hands this off",
+   "updated": "2026-10-27T23:05:00-07:00",
+   "review": null,
    "result": null,
    "sources": [
     {
-     "label": null,
-     "urls": [
-      "https://www.sec.gov/Archives/edgar/data/1181412/000162828026042639/spaceexplorationtechnologi.htm"
-     ]
+     "label": "SEC EDGAR",
+     "urls": []
     },
     {
-     "label": null,
-     "urls": [
-      "https://www.sec.gov/Archives/edgar/data/1181412/000110465926118614/tm2628247d1_8k.htm"
-     ]
+     "label": "Company IR pages",
+     "urls": []
     },
     {
-     "label": null,
-     "urls": [
-      "https://www.sec.gov/Archives/edgar/data/1181412/000162828026066482/spaceexplorationtechnologi.htm"
-     ]
+     "label": "federalreserve.gov",
+     "urls": []
     },
     {
-     "label": null,
-     "urls": [
-      "https://www.sec.gov/Archives/edgar/data/732712/000073271226000049/a2026q3exhibit99.htm"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.verizon.com/about/news/verizon-delivers-another-record-breaking-quarter"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://investor.t-mobile.com/news-releases/news-release-details/t-mobile-host-q3-2026-earnings-call-october-28-2026"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://investor.t-mobile.com/events/event-details/t-mobile-q3-2026-earnings-call"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://federalreserve.gov/newsevents/2026-october.htm"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.fcc.gov/October2026"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://docs.fcc.gov/public/attachments/DOC-425708A1.pdf"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://americantower.gcs-web.com/news-releases/news-release-details/american-tower-plans-third-quarter-2026-earnings-release-and"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://investor.crowncastle.com/stock-information/dividend-history"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://ir.sbasite.com/English/news-events/press-releases/news-details/2026/SBA-Communications-Corporation-Sets-Date-for-Third-Quarter-2026-Earnings-Release/default.aspx"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.sec.gov/Archives/edgar/data/732717/000073271726000370/t-3q2026exhibit991.htm"
-     ]
-    },
-    {
-     "label": "news fallback",
-     "urls": [
-      "https://protos.com/spacex-crashed-too-hard-for-insiders-bonus-unlock/"
-     ]
+     "label": "fcc.gov",
+     "urls": []
     }
    ],
-   "evidence": "METHOD: SEC EDGAR filings (submissions API + filing documents, fetched with curl) and company IR / federalreserve.gov / fcc.gov pages first, because they are the primary record; news only as a flagged fallback. Researched Tue Oct 27, 2026, ~1:10-1:25 AM PT.\n\nCARRIED FORWARD from 001-2026-10-25-2 (approved): AMT, CCI, SBAC, T, TMUS blocks and SPCX Q3 results/Grain block are still accurate and carried forward (re-checked against EDGAR filing lists on Oct 27 ~1:15 AM PT: no new 8-K for AMT, CCI, SBAC, TMUS or T since Oct 25). Changes tonight: VZ Q3 results added; SPCX lock-up schedule verified from the 424B4 and new Oct 26 8-K added; TMUS timing re-confirmed from IR; MACRO block added.\n\n=== SPCX: Space Exploration Technologies Corp (SpaceX), CIK 1181412 ===\nLast earnings: CONFIRMED Q3 2026 reported Tue Oct 20, 2026 (webcast 4:30 PM ET). Revenue $14.575B (+161% y/y); income from operations $2.791B; net income $4.404B; diluted EPS $0.35; adj. EBITDA $8.809B (+306%). [carried forward; SEC EX-99 https://www.sec.gov/Archives/edgar/data/1181412/000162828026066482/spaceexplorationtechnologi.htm]. Q3 10-Q filed Oct 22, 2026: https://www.sec.gov/Archives/edgar/data/1181412/000162828026066880/spcx-20260930.htm\nGuidance: No numeric guidance in the release; call commentary UNVERIFIED (carried forward).\nNext earnings: ESTIMATED late Jan-Feb 2027 (Q4/FY2026). Quarterly cadence only; no company announcement. UNVERIFIED.\nNext catalyst:\n- LOCK-UP, VERIFIED FROM PRIMARY (424B4 filed Jun 12, 2026, 'Shares Eligible for Future Sale', prospectus p.259-260; IPO price $135.00): https://www.sec.gov/Archives/edgar/data/1181412/000162828026042639/spaceexplorationtechnologi.htm\n  * The 328.4M figure IS in the 424B4: 'Up to 328.4 million shares of Class A common stock, representing 7% of the shares subject to the 180-day lock-up period' on each of Sep 24, Oct 9 and Oct 24, 2026 (days 105/120/135). The Oct 24 tranche (a Saturday; first tradable session Mon Oct 26) is now PAST.\n  * Q3-linked tranche: 'Up to 1.3 billion shares ... 28%' on the second full Nasdaq trading day after Q3 results. Q3 results were released Oct 20 after the close, so this was Thu Oct 22, 2026 (date DERIVED from the prospectus rule + release timing). PAST.\n  * NEXT UNLOCK: CONFIRMED DATE Tue Dec 8, 2026 (day 180). Size per 424B4: up to 328.4M if the Additional Release Shares (455.8M) were released on the First Earnings Release Date, or up to 797.6M if they were not.\n  * Whether the 455.8M Additional Release triggered: the 424B4 condition was a close >= 30% above $135 (i.e. >= $175.50) on 5 of the 10 trading days ending on the Q2 release date (Aug 4, 2026). News sources say it did NOT trigger (closes ~$108-125), so the Dec 8 tranche would be up to 797.6M. This non-trigger is NEWS-SOURCED (UNVERIFIED vs a primary price record): https://protos.com/spacex-crashed-too-hard-for-insiders-bonus-unlock/ ; https://www.benzinga.com/trading-ideas/previews/26/08/60877805/spacex-dodges-456-million%e2%80%91share-supply-shock-ahead-q2-earnings ; https://www.indmoney.com/blog/us-stocks/spacex-share-unlock-spcx-stock\n  * Extended lock-up (non-Musk holders) releases continue after Q4 2026 results (up to 351.9M), Mar 18, 2027 (176.0M), etc.; Musk's ~6.4B shares are locked until Jun 12, 2027 (day 366). Source: same 424B4 table.\n  * Neither the Q2/Q3 10-Q nor the Aug 4 8-K mentions the lock-up (text search on EDGAR copies, Oct 27).\n- NEW 8-K filed Oct 26, 2026 (Item 8.01): Oct 24 binding commitment letter with an Apollo-managed lessor for a master finance lease of GPU pods; aggregate principal payments ~$40B; expected to close before year-end 2026 (ESTIMATED by company); lease schedules expected to start 1H 2027. https://www.sec.gov/Archives/edgar/data/1181412/000110465926118614/tm2628247d1_8k.htm\n- Grain 800 MHz spectrum purchase (Oct 8 agreement): close expected 1H 2027 subject to FCC approval (ESTIMATED by company, carried forward). https://graingp.com/grain-management-announces-definitive-agreement-to-sell-nationwide-800-mhz-spectrum-portfolio-to-spacex/\n- FCC Oct 29 SCS/D2D item (see MACRO) is directly relevant to Starlink direct-to-cell.\nSources: 424B4 and 8-K/10-Q links above; EDGAR filing list https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1181412\nUnverified: whether the 455.8M Additional Release failed to trigger (news only), so Dec 8 size 797.6M vs 328.4M rests on news; Q4 earnings date; ~$8B Grain price (news); Nov 5 Grain deadline (news); IPO first-trade date from primary.\n\n=== AMT: American Tower ===\nLast earnings: Q3 2026 due TODAY Tue Oct 27, 7:00 AM ET (4:00 AM PT); call 8:30 AM ET (5:30 AM PT). CONFIRMED (carried forward): https://americantower.gcs-web.com/news-releases/news-release-details/american-tower-plans-third-quarter-2026-earnings-release-and\nStatus at research time: NOT out (no new AMT 8-K on EDGAR as of ~1:25 AM PT). Results/guidance/SpaceX & tower-lease commentary: PENDING; Hal's 4:45 AM compile covers AMT.\nGuidance: FY2026 outlook update expected with the release (pending).\nNext earnings: after today, ESTIMATED late Feb 2027 (Q4/FY), cadence only, UNVERIFIED.\nNext catalyst: Today's print. Next distribution declaration ESTIMATED early-mid Dec 2026 (cadence; UNVERIFIED). Last distribution $1.79/sh paid Oct 20, 2026 (CONFIRMED, carried forward): https://www.sec.gov/Archives/edgar/data/1053507/000105350726000145/amt-20260917.htm\nUnverified: next distribution timing; anything about Q3.\n\n=== CCI: Crown Castle (carried forward) ===\nLast earnings: CONFIRMED Q3 2026 Oct 21, 2026: site rental revenue $966M (-5%); AFFO/sh $1.24 (+11%); adj. EBITDA $673M. https://investor.crowncastle.com/news-releases/news-release-details/crown-castle-reports-third-quarter-2026-results-and-updates ; 8-K https://www.sec.gov/Archives/edgar/data/1051470/000105147026000085/cci-20261021.htm\nGuidance: RAISED FY2026 (AFFO/sh midpoint $4.60, +$0.01; adj. EBITDA midpoint $2,715M, +$25M; site rental revenue midpoint $3,875M, +$20M). Carried forward.\nNext earnings: ESTIMATED late Jan-early Feb 2027. UNVERIFIED.\nNext catalyst: Q4 dividend declaration ESTIMATED ~early Nov 2026 (history: Nov 5, 2025; Nov 6, 2024), ex/record ~mid-Dec; current $1.0625/qtr. NOT yet declared as of Oct 27 ~1:20 AM PT (no new CCI 8-K; dividend history page): https://investor.crowncastle.com/stock-information/dividend-history\nNew since Oct 25: a Form 144 (proposed insider sale notice) was filed Oct 26, 2026 on CCI's EDGAR list; filer and size not opened, UNVERIFIED. https://www.sec.gov/cgi-bin/browse-edgar?action=getcompany&CIK=1051470\nUnverified: next earnings date; dividend declaration date/amount; Form 144 details.\n\n=== SBAC: SBA Communications (carried forward) ===\nLast earnings: none in window.\nNext earnings: CONFIRMED Mon Nov 2, 2026 after close; call 5:00 PM ET (2:00 PM PT). https://ir.sbasite.com/English/news-events/press-releases/news-details/2026/SBA-Communications-Corporation-Sets-Date-for-Third-Quarter-2026-Earnings-Release/default.aspx\nNext catalyst: Nov 2 print + outlook; Q4 dividend declaration ESTIMATED with the Nov 2 release (Q2 precedent). Last dividend $1.25/sh paid Sep 17 (CONFIRMED). https://ir.sbasite.com/news-events/press-releases/news-details/2026/SBA-Communications-Corporation-Reports-Second-Quarter-2026-Results-Updates-Full-Year-2026-Outlook-and-Declares-Quarterly-Cash-Dividend/default.aspx\nNew since Oct 25: nothing on EDGAR (latest filing a Form 4 on Oct 20).\nUnverified: Nov 2 dividend declaration and amount.\n\n=== VZ: Verizon (UPDATED) ===\nLast earnings: CONFIRMED Q3 2026 reported Mon Oct 26, 2026 (8-K EX-99). Total operating revenue $34.3B (+1.5% y/y); mobility & broadband service revenue $23.5B (+2.9%); net income $5.3B (+5.2%); EPS $1.25 (+6.8%); adj. EPS $1.31 (+8.3%); adj. EBITDA $13.8B (+8.0%, company record); operating cash flow $11.5B (+2.2%); FCF $7.8B (+12.1%). KPIs: 406K postpaid phone net adds; 137K postpaid net accounts; postpaid phone churn 0.94% (-4 bps); 314K broadband net adds (159K FWA, 155K fiber). Also a $2.0B+ AWS AI-infrastructure agreement. YTD capital return $12.8B ($8.8B dividends, $4.0B buybacks); still expects up to $4.5B buybacks for FY.\nGuidance: RAISED FY2026 (third straight quarter):\n- Postpaid phone net adds 1.1-1.2M (was upper half of 750K-1.0M).\n- Adj. EPS $5.04-5.06, +7.0-7.5% (was +6.0-7.0%).\n- Operating cash flow +3.5-5.0% (was +2.0-4.0%).\n- FCF growth approaching +12.0% (was +9.0-10.0%).\n- Mobility & broadband service revenue: upper half of +2.5-3.0%, ~+4.0% in Q4.\n- Capex MAINTAINED $16.0-16.5B.\nNext earnings: ESTIMATED late Jan 2027 (Q4/FY2026); cadence only, no date announced. UNVERIFIED.\nNext catalyst: CONFIRMED 70.75c dividend payable Mon Nov 2, 2026 (carried forward, https://www.verizon.com/about/investors). Next dividend declaration ESTIMATED early Dec 2026 (cadence; UNVERIFIED). FCC Oct 29 meeting items (mid-band auction, SCS) are sector-relevant.\nSources:\n- 8-K EX-99: https://www.sec.gov/Archives/edgar/data/732712/000073271226000049/a2026q3exhibit99.htm\n- 8-K: https://www.sec.gov/Archives/edgar/data/732712/000073271226000049/vz-20261026.htm\n- Release: https://www.verizon.com/about/news/verizon-delivers-another-record-breaking-quarter\n- Webcast page: https://www.verizon.com/about/investors/quarterly-reports/3q-2026-earnings-conference-call-webcast\n- Transcript (news, not used for any number above): https://www.fool.com/earnings/call-transcripts/2026/10/26/verizon-vz-q3-2026-earnings-call-transcript/\nUnverified: next earnings date; next dividend declaration timing.\n\n=== T: AT&T (carried forward) ===\nLast earnings: CONFIRMED Q3 2026 Oct 21: revenue $32.3B (+5.3%); adj. EPS $0.65; GAAP EPS $0.13 (incl. $2.6B Mexico impairment); FCF $5.0B. https://www.sec.gov/Archives/edgar/data/732717/000073271726000370/t-3q2026exhibit991.htm\nGuidance: RAISED 2026 adj. EPS to ~$2.40 range; LOWERED capital investment ($23-24B 2026; $22-23B/yr 2027-28); FCF targets maintained. (Prior EPS range UNVERIFIED.) https://about.att.com/story/2026/3q-earnings.html\nNext earnings: ESTIMATED late Jan 2027 (UNVERIFIED).\nNext catalyst: CONFIRMED $0.2775 dividend payable Nov 2, 2026 (https://www.prnewswire.com/news-releases/att-declares-dividends-on-common-and-preferred-shares-302889681.html). Mexico sale ($2B) close ESTIMATED Q1 2027 by company (https://www.prnewswire.com/news-releases/att-to-sell-att-mexico-to-grupo-televisa-and-fintech-holdings-302907590.html).\nNew since Oct 25: only a Form 4 (Oct 26) on EDGAR. Note an Oct 16 8-K (Item 5.02, officer/director change) exists that last night's block did not mention; not opened, UNVERIFIED: https://www.sec.gov/Archives/edgar/data/732717/000119312526424057/d905556d8k.htm\nUnverified: Q4 date; Forged Fiber 37 close timing; Oct 16 8-K contents.\n\n=== TMUS: T-Mobile US ===\nLast earnings: none in window.\nGuidance in force: (carried forward; news-sourced, UNVERIFIED) adj. FCF $18.4-18.8B; core adj. EBITDA $37.1-37.5B.\nNext earnings: CONFIRMED Wed Oct 28, 2026. Release/Investor Factbook ~4:05 PM ET (1:05 PM PT); call 4:30 PM ET (1:30 PM PT). Re-confirmed Oct 27 from T-Mobile IR release (Sep 17) and IR event page.\n- https://investor.t-mobile.com/news-releases/news-release-details/t-mobile-host-q3-2026-earnings-call-october-28-2026\n- https://investor.t-mobile.com/events/event-details/t-mobile-q3-2026-earnings-call\n- Wire copy: https://www.businesswire.com/news/%68ome/20260917015300/en/T-Mobile-to-Host-Q3-2026-Earnings-Call-on-October-28-2026\n(Direct fetch of the IR page returned 403 to our fetcher; content read via search-index copy of the same IR URL plus the Business Wire original.)\nNext catalyst: Oct 28 print. Dividend $1.17/sh (+15%), record Nov 25, payable Dec 10, 2026 (CONFIRMED, carried forward): https://www.t-mobile.com/news/business/t-mobile-announces-q4-2026-dividend-increase\nUnverified: guidance figures; ex-date (derived = record date under T+1).\n\n=== MACRO ===\nFed (FOMC): Meeting Tue-Wed Oct 27-28, 2026 (CONFIRMED, federalreserve.gov calendar). Fed's October calendar lists the FOMC Meeting release at 2:00 PM (ET) Oct 28 and the FOMC Press Conference at 2:30 PM (ET) Oct 28 = 11:00 AM PT statement / 11:30 AM PT press conference (CONFIRMED). Not an SEP meeting (next SEP meeting Dec 8-9, 2026). Minutes of this meeting due Nov 18, 2026. A Fed media advisory (Oct 21) says Chairman Kevin Warsh holds the press conference at 2:30 PM EDT (seen via a news aggregator copy, forth.news; UNVERIFIED on federalreserve.gov directly).\n- https://www.federalreserve.gov/monetarypolicy/fomccalendars.htm\n- https://federalreserve.gov/newsevents/2026-october.htm\n- https://www.federalreserve.gov/monetarypolicy.htm?categoryId=1\nFCC: Open Meeting Thu Oct 29, 2026, 10:30 AM-12:30 PM ET (7:30-9:30 AM PT), CONFIRMED. Agenda (final, per fcc.gov meeting page):\n1. Auctioning 25 MHz of mid-band spectrum (1675-1695 MHz and 2020-2025 MHz; terrestrial, D2D or hybrid) - FNPRM. FLAG: wireless/spectrum/satellite (carriers, SPCX).\n2. Modernizing Supplemental Coverage from Space (SCS) rules - NPRM; +482 MHz for SCS, harmonize SCS/MSS. FLAG: satellite/D2D, directly relevant to SpaceX Starlink direct-to-cell and carrier partners (TMUS).\n3. Unlocking the 800 MHz Cellular band for drone use - R&O; 50 MHz of licensed low-band spectrum. FLAG: 800 MHz / wireless. The FCC text does not mention the SpaceX-Grain 800 MHz deal; whether Grain's licenses sit in this Cellular band is UNVERIFIED, so do not assume a link.\n4. Prohibiting test labs/certification bodies in non-reciprocal countries - equipment authorization (transition ends Dec 1, 2028). FLAG: minor, device/equipment supply chain.\n5. International Section 214 framework (telecom security) - R&O + FNPRM. FLAG: minor, carriers.\n6. Rural Broadband Protection Act implementation - NPRM.\n7. Eliminating accessibility barriers - NPRM.\n8. Enforcement Bureau action (unnamed; added on the final agenda).\nNo tower-specific item.\n- https://www.fcc.gov/October2026\n- Tentative agenda (Oct 8): https://docs.fcc.gov/public/attachments/DOC-425708A1.pdf ; https://www.fcc.gov/document/fcc-announces-tentative-agenda-october-open-meeting-11\n",
+   "evidence": null,
    "parse_error": null
   },
   {
-   "id": "001-2026-10-26-4",
-   "file": "jobs/001-2026-10-26-4.json",
-   "date": "2026-10-26",
+   "id": "001-2026-10-27-4",
+   "file": "jobs/001-2026-10-27-4.json",
+   "date": "2026-10-27",
    "owner": "Hal",
    "priority": 1,
-   "status": "approved",
-   "task": "Assemble outbox/this-week-2026-10-27.md (marked awaiting Jeffrey) from jobs 001-2026-10-26-1 to -3, same format as outbox/this-week-2026-10-26.md. Compile around 4:45 AM PT so AMT's 4:00 AM PT release can be included; mark any unfinished section pending rather than waiting. Set this job to needs_review before 5:30 AM. Nothing sent, posted, or traded. At 4:45, pull AMT's Q3 headline (EPS/AFFO, revenue, guidance, any SpaceX or tower-lease commentary) from AMT's 8-K or IR release with link if Compass didn't get it.",
-   "calls_used": 12,
+   "status": "queued",
+   "task": "At ~4:45 AM PT, assemble outbox/this-week-2026-10-28.md (Status: awaiting Jeffrey) from jobs 001-2026-10-27-1/-2/-3: every ticker gets Cash Money S/R, next catalyst with source, one-line bias; every claim linked; Fed 11:00 AM PT and TMUS ~1:05 PM PT called out at top; budgets at bottom. Set this job to needs_review before 5:30 AM. Also include a short 'Did the levels work?' line from Cash Money's hit-rate check so Jeffrey can judge the compute question, plus calls used per bot.",
+   "calls_used": 0,
    "usd_spent": null,
-   "next_step": "6:30 AM brief delivers to Jeffrey; AMT call commentary still pending.",
-   "updated": "2026-10-27T05:40:00-07:00",
-   "review": "Approved by 5:30 AM checker. outbox/this-week-2026-10-27.md exists, marked 'awaiting Jeffrey', covers all 7 tickers with levels, sourced catalyst and bias, budgets at bottom (all bots under 40, $0 spend). Spot-check: AMT EX-99.1 (SEC, 200) contains revenue $2,785M, AFFO/sh $2.87, FY26 AFFO/sh $11.04-11.16, matching the outbox. AMT call commentary correctly marked pending. Nothing sent, posted, or traded.",
+   "next_step": "1 AM workers step hands this off",
+   "updated": "2026-10-27T23:05:00-07:00",
+   "review": null,
    "result": null,
    "sources": [
     {
-     "label": null,
-     "urls": [
-      "https://www.sec.gov/Archives/edgar/data/1053507/000105350726000154/pressreleaseq32026.htm"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.sec.gov/Archives/edgar/data/1053507/000105350726000154/amt-20261027.htm"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://data.sec.gov/submissions/CIK0001053507.json"
-     ]
-    },
-    {
-     "label": "SPCX, AMT, CCI, SBAC, VZ, T, TMUS",
-     "urls": [
-      "https://query1.finance.yahoo.com/v8/finance/chart/{T}?interval=5m&range=1d&includePrePost=true"
-     ]
-    },
-    {
-     "label": "jobs/001-2026-10-26-1.json",
-     "urls": []
-    },
-    {
-     "label": "jobs/001-2026-10-26-2.json",
-     "urls": []
-    },
-    {
-     "label": "jobs/001-2026-10-26-3.json",
+     "label": "jobs/001-2026-10-27-1..3.json",
      "urls": []
     }
    ],
-   "evidence": "Built outbox/this-week-2026-10-27.md (Status: awaiting Jeffrey) at ~4:55 AM PT from jobs -1 (Cash Money levels/bias), -2 (Compass catalysts), -3 (SiteScout news/X), all needs_review. AMT Q3 pulled from AMT's own 8-K EX-99.1 (accepted 7:03 AM ET Oct 27): revenue $2,785M (+2.5%), diluted EPS $1.64 (-9.9%), AFFO/sh $2.87 (+3.2%), adj EBITDA $1,832M (+0.9%), FCF $986M; $2.0B added buyback (Oct 23); Canada sale ~$202M; FY26 outlook raised: AFFO/sh $11.04-11.16 (midpoint +$0.02), property revenue midpoint +$55M, adj EBITDA midpoint unchanged; guide assumes 5.10 BRL/USD. Text search of EX-99.1 found no SpaceX/Starlink/satellite mention. Call (5:30 AM PT) pending. Tuesday premarket partial ranges added from Yahoo 5m pre bars at ~4:55 AM PT (no volume). Nothing sent, posted, or traded.",
+   "evidence": null,
    "parse_error": null
   },
   {
-   "id": "001-2026-10-26-3",
-   "file": "jobs/001-2026-10-26-3.json",
-   "date": "2026-10-26",
+   "id": "001-2026-10-27-3",
+   "file": "jobs/001-2026-10-27-3.json",
+   "date": "2026-10-27",
    "owner": "SiteScout",
    "priority": 2,
-   "status": "approved",
-   "task": "Scan Monday's session and overnight news plus public X posts for SPCX, AMT, CCI, SBAC, VZ, T, TMUS: how each ticker closed Monday and why, the SPCX unlock-day reaction, VZ post-earnings move, any new SpaceX cell-site/tower lease news or denials, Brazil/EWZ follow-through for AMT/SBAC. Link every item; mark rumors and X posts unverified.",
-   "calls_used": 28,
+   "status": "queued",
+   "task": "Tuesday Oct 27 session recap for the 7 tickers + sector (AMT print reaction, towers, carriers), overnight news, Brazil/EWZ follow-through, and X public scan for SpaceX tower/D2D news and TMUS previews. Link every item; mark X posts unverified. Cap at 20 calls (last night used 28 on a P2 job). Don't re-pull filings, dates, or times; Compass covers those. Focus on price reaction and news only.",
+   "calls_used": 0,
    "usd_spent": null,
-   "next_step": "6:30 AM brief.",
-   "updated": "2026-10-27T05:40:00-07:00",
-   "review": "Approved by 5:30 AM checker. Every item linked; X posts and single-source items labeled unverified. Spot-checks: Yahoo VZ daily API live (200) and VZ low 42.47 matches saved bars; Inside Towers article loads (200). etf.com returns 403 to scripts and Exame loads as a JS shell, so the EWZ -19.82% / Ibovespa -13.88% figures were not independently confirmed by fetch (third source riotimesonline also listed). Webull use was read-only bars.",
-   "result": "VZ -3.49% to $43.10 after a Q3 EPS beat ($1.31 vs about $1.27), a revenue miss ($34.31B vs about $34.77B) and a guidance raise. Intraday low of $42.47 CONFIRMED (Yahoo 1m bar at 6:31 AM PT plus Webull daily bar). T -0.38% ($20.85); TMUS +0.27% ($146.93) after a new 52-week low of $143.92; CCI +1.74% ($87.47); AMT -0.37% ($188.28); SBAC +0.63% ($185.92). SPCX -0.40% ($146.90) on unlock day. The 328.4M-share lockup is CONFIRMED in the SEC 424B4, and volume of 103.2M was about average, so the reaction was muted. No new SpaceX tower-lease news or denials. Verizon's CEO said 4-6 years and $300-500B, with no MVNO; Musk replied on X '2 or 3 years' (unverified). EWZ -19.82% to $34.15, but it bounced about 8.8% off the $31.40 opening low; overnight it is flat around $34.11. AMT earnings not yet out (4:00 AM PT).",
+   "next_step": "1 AM workers step hands this off",
+   "updated": "2026-10-27T23:05:00-07:00",
+   "review": null,
+   "result": null,
    "sources": [
     {
-     "label": null,
-     "urls": [
-      "https://query1.finance.yahoo.com/v8/finance/chart/VZ?interval=1m&range=1d"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://query1.finance.yahoo.com/v8/finance/chart/VZ?interval=1d&range=1mo"
-     ]
-    },
-    {
-     "label": "Webull MCP get_stock_bars_single (VZ, SPCX daily RTH; read-only",
+     "label": "News sites",
      "urls": []
     },
     {
-     "label": null,
-     "urls": [
-      "https://www.cnbc.com/2026/10/25/stock-market-today-live-updates.html"
-     ]
+     "label": "X public posts (read-only",
+     "urls": []
     },
     {
-     "label": null,
-     "urls": [
-      "https://www.verizon.com/about/news/verizon-delivers-another-record-breaking-quarter"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.verizon.com/about/sites/default/files/verizon-3Q26-earnings-press-release.pdf"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.investing.com/news/earnings/verizon-beats-profit-estimates-raises-guidance-4972194"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://stockstory.org/us/stocks/nyse/vz/news/why-up-down/why-verizon-vz-stock-is-down-today"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.investing.com/news/stock-market-news/why-is-verizon-stock-sliding-today-93CH-4973002"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://thedesk.net/2026/10/verizon-q3-2026-earnings-report/"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.sec.gov/Archives/edgar/data/1181412/000162828026042639/spaceexplorationtechnologi.htm"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://capitalsnitch.com/news/spacex-unlock-monday-328-million-shares-spcx-october-26"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.tipranks.com/news/spacex-stock-climbs-today-but-328-million-shares-are-about-to-be-unlocked"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://insidetowers.com/spacex-talks-of-80000-sites-continues-boost-to-tower-market/"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://rcrwireless.com/20261026/network-infrastructure/spacex-eyes-80000-cell-sites-telco-diary"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://thenextweb.com/news/spacex-cell-sites-80000-starlink-mobile"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.investing.com/news/stock-market-news/bnp-paribas-comemnts-on-spacex-talks-with-tower-firms-93CH-4972047"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.bnamericas.com/en/features/the-investment-outlook-for-latam-telecom-tower-companies"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.etf.com/sections/features/brazil-etf-plunges-nearly-20-after-lulas-surprise-win"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://exame.com/invest/mercados/ibovespa-fecha-em-baixa-de-139-maior-queda-diaria-em-6-anos-dolar-dispara-82/"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.riotimesonline.com/brazils-financial-morning-call-for-tuesday-october-27-2026/"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://americantower.gcs-web.com/news-releases/news-release-details/american-tower-plans-third-quarter-2026-earnings-release-and"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://www.investing.com/news/earnings/american-tower-earnings-ahead-can-tower-demand-offset-eps-slide-93CH-4973113"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://exa.ai/library/markets/stock/T?date=2026-10-26&view=daily"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://x.com/elonmusk/status/2114774224015663608"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://x.com/SawyerMerritt/status/2114764647052308783"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://x.com/i/trending/2114808774364102771"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://x.com/i/trending/2114679277291815116"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://x.com/ThesisAndMetric/status/2114804207002001686"
-     ]
-    },
-    {
-     "label": null,
-     "urls": [
-      "https://x.com/StageTwoTrader/status/2114698306849009796"
-     ]
+     "label": "Yahoo chart API",
+     "urls": []
     }
    ],
-   "evidence": "MONDAY OCT 26 SESSION + OVERNIGHT SCAN (to about 1:12 AM PT Tue Oct 27). All times PT. Closes and % changes are from Yahoo daily bars (query1.finance.yahoo.com/v8/finance/chart/<TICKER>?interval=1d&range=1mo). VZ and SPCX were cross-checked against Webull daily bars (read-only get_stock_bars_single). '20d avg vol' means the average of the 20 sessions before Monday.\n\nMARKET BACKDROP: S&P 500 +0.70%, Nasdaq +0.82%, Dow +0.28%. The rally came from Anthropic's IPO filing and chip stocks. Communication services was the weak spot: XLC hit its lowest level since June 2025, and TMUS printed a new 52-week low. https://www.cnbc.com/2026/10/25/stock-market-today-live-updates.html\n\nPER TICKER (Mon Oct 26 close)\n- VZ: $43.10, -3.49% (Fri $44.66). Range $42.47-$43.84. Volume 45.2M, about 1.6x its 28.1M 20d avg. WHY: Q3 reported before the open. Adj EPS $1.31 beat consensus of $1.27-1.28. Revenue $34.31B (+1.5% y/y) missed consensus of about $34.77B; the shortfall was equipment revenue (-9%) as customers keep phones longer and Verizon cuts device subsidies. Other results: 406K postpaid phone net adds (best Q3 in 5 years), postpaid phone churn 0.94%, adj EBITDA $13.8B (a record), FCF $7.8B (+12%), and a $2B+ AWS fiber/AI infrastructure deal. Guidance was raised for the 3rd straight quarter: FY26 adj EPS $5.04-5.06 vs about $5.02 consensus, postpaid phone net adds 1.1-1.2M, FCF growth approaching 12%. The stock was roughly flat premarket near $44 (CNBC), then sold off at the open. On the call, CEO Dan Schulman said SpaceX needs 4-6 years and $300-500B to build a national network and ruled out an MVNO deal with SpaceX. https://www.verizon.com/about/news/verizon-delivers-another-record-breaking-quarter ; https://www.investing.com/news/earnings/verizon-beats-profit-estimates-raises-guidance-4972194 ; https://stockstory.org/us/stocks/nyse/vz/news/why-up-down/why-verizon-vz-stock-is-down-today ; https://www.investing.com/news/stock-market-news/why-is-verizon-stock-sliding-today-93CH-4973002 ; https://thedesk.net/2026/10/verizon-q3-2026-earnings-report/\n  * VZ LOW CONFIRMED at $42.47. Yahoo 1-minute bars show the low in the 6:31 AM PT bar (low 42.470001; the 6:30 bar's low was 43.14). Webull's daily RTH bar for Oct 26 independently shows low 42.470000, high 43.8399, close 43.10, volume 45.25M. https://query1.finance.yahoo.com/v8/finance/chart/VZ?interval=1m&range=1d\n- T: $20.85, -0.38% (Fri $20.93). Range $20.62 (at the open) to $21.21. Volume 59.4M vs 51.6M 20d avg. WHY: little follow-through after Friday's -8%. No new AT&T-specific news found; it traded with the SpaceX overhang and VZ's print. https://exa.ai/library/markets/stock/T?date=2026-10-26&view=daily\n- TMUS: $146.93, +0.27% (Fri $146.54). Its intraday low of $143.92 (about 7:20 AM PT) was a new 52-week low (CNBC); it then recovered to close green. Volume 7.66M vs 6.06M 20d avg. WHY: no TMUS-specific news. It has earnings Wed Oct 28 after the close. https://www.cnbc.com/2026/10/25/stock-market-today-live-updates.html\n- CCI: $87.47, +1.74% (Fri $85.97). High $89.05 (about 6:45 AM PT). Volume 7.52M vs 5.68M 20d avg. WHY: continued follow-through on the SpaceX cell-site talks report; Crown Castle is the named counterparty. No new company statement found. https://insidetowers.com/spacex-talks-of-80000-sites-continues-boost-to-tower-market/\n- AMT: $188.28, -0.37% (Fri $188.97). Range $187.28-$191.19. Volume 4.43M vs 3.55M 20d avg. WHY: it held Friday's +4% SpaceX pop. Brazil exposure (about 22K Brazil sites per BNamericas) did NOT produce a large drawdown despite Ibovespa -13.9% and BRL about -8.8%. No AMT-specific news Monday; it was positioning ahead of earnings. https://www.bnamericas.com/en/features/the-investment-outlook-for-latam-telecom-tower-companies\n- SBAC: $185.92, +0.63% (Fri $184.75). Range $184.20-$189.43. Volume 1.37M vs 1.14M 20d avg. WHY: same as AMT. It has more than 12K Brazil sites, but the Brazil shock was muted in the stock. No SBAC-specific news found.\n- SPCX: $146.90, -0.40% (Fri $147.49). Range $144.57 (about 6:55 AM PT) to $150.24 (about 8:25 AM PT). See the unlock section below.\n\nSPCX UNLOCK DAY\n- LOCKUP CONFIRMED from the primary source. SpaceX's final prospectus (424B4, filed 2026-06-12) says 'October 24, 2026 (135th day after the date of this prospectus) Up to 328.4 million shares of Class A common stock, representing 7% of the shares subject to the 180-day lock-up period.' Oct 24 was a Saturday, so Monday Oct 26 was the first tradable day. https://www.sec.gov/Archives/edgar/data/1181412/000162828026042639/spaceexplorationtechnologi.htm . Caveat: I did not check for any later amendment or early waiver. Secondary sources agree: https://capitalsnitch.com/news/spacex-unlock-monday-328-million-shares-spcx-october-26 ; https://www.tipranks.com/news/spacex-stock-climbs-today-but-328-million-shares-are-about-to-be-unlocked . The next tranche is Dec 8, 2026: up to 797.6M shares (CapitalSnitch and MartianAlpha, citing the 424B4; the Dec 8 figure was not checked in the filing).\n- REACTION: muted. Webull RTH volume was 103.2M. That is in line with the 20-session average of about 101.8M, about 1.2x the median of about 86.0M, and roughly half of the Oct 21-22 earnings/1.3B-share-unlock days (221M and 197M). The stock dipped to $144.57 early, bounced to $150.24, and closed -0.4%. Yahoo's last extended-hours print was about $147.68 at 1:09 AM PT Tue. Other context: Musk's $40B GPU debt post (Sun) and the risk-on tape from the Anthropic IPO filing. https://www.cnbc.com/2026/10/25/stock-market-today-live-updates.html\n\nSPACEX CELL-SITE / TOWER LEASE NEWS\n- No new primary reporting, deal announcement, or denial was found from SpaceX, AT&T, Verizon, T-Mobile, CCI, AMT or SBAC. All Monday coverage recycles the Oct 22 Bloomberg report. Inside Towers (Oct 26) says the talks reportedly include AMT and Vertical Bridge alongside CCI and that 'none of the companies commented.' CCI's CEO said on its Q3 call: 'you can assume we're talking to all parties.' https://insidetowers.com/spacex-talks-of-80000-sites-continues-boost-to-tower-market/ ; https://rcrwireless.com/20261026/network-infrastructure/spacex-eyes-80000-cell-sites-telco-diary ; https://thenextweb.com/news/spacex-cell-sites-80000-starlink-mobile\n- BNP Paribas (Investing.com, Oct 26) estimates SpaceX would need at least $100B before revenue: $75B capex plus $30B opex, with $25B of that for 80K macro sites at about $300K each. It expects SpaceX to negotiate with AMT, CCI and SBAC plus Vertical Bridge. Take-or-pay MLAs would be non-cancellable. It frames this as SpaceX's last chance at an MVNO deal. https://www.investing.com/news/stock-market-news/bnp-paribas-comemnts-on-spacex-talks-with-tower-firms-93CH-4972047\n- The closest thing to a carrier pushback is Verizon CEO Schulman's comments: 4-6 years and $300-500B, no MVNO for SpaceX. Musk replied on X at 10:40 AM PT Mon: 'Will take 2 or 3 years' (see UNVERIFIED below). https://thedesk.net/2026/10/verizon-q3-2026-earnings-report/\n\nBRAZIL / EWZ\n- EWZ closed Mon at $34.15, -19.82% (Fri $42.59). It opened at $31.71 and hit a low of $31.40 at the open (about -26%), then recovered about 8.8% off the low into the close. Volume 298.9M, about 5.5x its 54.5M 20d avg. Ibovespa -13.88% to 176,608, its worst day since March 2020, with a 30-minute circuit-breaker halt. USD/BRL closed 5.4154 (+8.79%, i.e. real weaker). Brazil's Treasury cancelled this week's inflation-linked and fixed-rate bond auctions. https://www.etf.com/sections/features/brazil-etf-plunges-nearly-20-after-lulas-surprise-win ; https://exame.com/invest/mercados/ibovespa-fecha-em-baixa-de-139-maior-queda-diaria-em-6-anos-dolar-dispara-82/ ; https://www.riotimesonline.com/brazils-financial-morning-call-for-tuesday-october-27-2026/\n- Did it continue? Not below Monday's opening low. The Sunday-night overnight drop (about -20%, pared to -18%, per CNBC) carried into the open, but the stock bounced from there. Tuesday overnight it is roughly flat: Yahoo's extended/overnight print was $34.11 at 1:09 AM PT (-0.1%, thin data). The next catalysts are Brazil's September PPI at 9:00 AM BRT (5:00 AM PT) and the B3 open at 10:00 AM BRT (6:00 AM PT).\n- AMT/SBAC impact on Monday was small: AMT -0.37%, SBAC +0.63%. FX translation on LatAm AFFO is the question for AMT's print today.\n\nAMT EARNINGS (Tue Oct 27)\n- NOT yet released as of about 1:12 AM PT. Release is scheduled for 7:00 AM ET (4:00 AM PT) with the call at 8:30 AM ET (5:30 AM PT). Consensus is GAAP EPS about $1.64 on about $2.76B revenue. FY26 AFFO/share guidance was $11.00-11.17 (raised in July). Watch FX/LatAm guidance after the BRL drop, US organic billings, and any SpaceX commentary. https://americantower.gcs-web.com/news-releases/news-release-details/american-tower-plans-third-quarter-2026-earnings-release-and ; https://www.investing.com/news/earnings/american-tower-earnings-ahead-can-tower-demand-offset-eps-slide-93CH-4973113 ; https://drillr.ai/article/amt-american-tower-q3-2026-earnings-preview-us-tower-growth-dish-churn\n\nUNVERIFIED (X posts and single-source items)\n- [UNVERIFIED, X post] Musk, 10:40 AM PT Mon, replying to Sawyer Merritt's post about the Verizon CEO's 4-6 year / $300-500B estimate: 'Will take 2 or 3 years.' https://x.com/elonmusk/status/2114774224015663608 (parent post: https://x.com/SawyerMerritt/status/2114764647052308783)\n- [UNVERIFIED, X story summary] 'Starlink Mobile launches nationwide in Brazil with Vivo' (Vivo Satélite D2D, 7M phones connected on day one). Not confirmed by a primary source. https://x.com/i/trending/2114808774364102771\n- [UNVERIFIED, X story summary, CONTAINS AN ERROR] An X trending summary names Verizon's CEO as 'Hans Vestberg'. TheDesk and the call coverage say Dan Schulman. Do not rely on it. https://x.com/i/trending/2114679277291815116\n- [UNVERIFIED, X] Retail chatter is mostly bearish carrier / bullish tower framing (e.g. https://x.com/ThesisAndMetric/status/2114804207002001686 , https://x.com/StageTwoTrader/status/2114698306849009796). None of it adds new facts.\n- [Single source] Inside Towers says the Bloomberg report includes AMT and Vertical Bridge as parties in talks. Other outlets say AMT 'declined to comment' and name only CCI as confirmed. https://insidetowers.com/spacex-talks-of-80000-sites-continues-boost-to-tower-market/\n- [Note] The prior job's Fri CCI close of $85.97 matches the Yahoo daily close. Yahoo's 5-minute bars show $85.99; small vendor differences.\n",
+   "evidence": null,
    "parse_error": null
   }
  ],
@@ -601,6 +242,33 @@
    "links": 0
   },
   {
+   "id": "001-2026-10-26-1",
+   "owner": "Cash Money",
+   "status": "approved",
+   "date": "2026-10-26",
+   "priority": 1,
+   "calls_used": 9,
+   "links": 13
+  },
+  {
+   "id": "001-2026-10-26-2",
+   "owner": "Compass",
+   "status": "approved",
+   "date": "2026-10-26",
+   "priority": 1,
+   "calls_used": 23,
+   "links": 16
+  },
+  {
+   "id": "001-2026-10-26-4",
+   "owner": "Hal",
+   "status": "approved",
+   "date": "2026-10-26",
+   "priority": 1,
+   "calls_used": 12,
+   "links": 4
+  },
+  {
    "id": "001-2026-10-25-3",
    "owner": "SiteScout",
    "status": "approved",
@@ -608,10 +276,51 @@
    "priority": 2,
    "calls_used": 23,
    "links": 0
+  },
+  {
+   "id": "001-2026-10-26-3",
+   "owner": "SiteScout",
+   "status": "approved",
+   "date": "2026-10-26",
+   "priority": 2,
+   "calls_used": 28,
+   "links": 29
   }
  ],
  "with_checker": [],
  "runs": [
+  {
+   "date": "2026-10-27",
+   "file": "runs/2026-10-27.md",
+   "title": "Overnight run: night of Tue Oct 27, 2026 (for Wed Oct 28 session)",
+   "sections": [
+    {
+     "heading": "11:05 PM plan step (Grok Bot)",
+     "kind": "plan",
+     "time": "11:05 PM",
+     "body_times": [
+      "4:45 AM",
+      "11:00 AM",
+      "11:30 AM",
+      "1:05 PM",
+      "1:30 PM"
+     ],
+     "body": "- Active goals: goals/001-this-week-prep.md.\n- The scheduled run can't message Hal directly, so Grok Bot wrote fallback jobs per the standing order and asked the parent to relay the plan to Hal for review.\n- Queued: 001-2026-10-27-1 (Cash Money, P1, levels incl. AMT post-Q3, TMUS pre-print, Fed-day risk), -2 (Compass, P1, catalysts; confirm TMUS/FOMC/FCC times; AMT call SpaceX commentary; new filings), -3 (SiteScout, P2, news/X scan), -4 (Hal, P1, assemble outbox/this-week-2026-10-28.md at ~4:45 AM PT).\n- Wednesday is event-heavy: FOMC statement 11:00 AM PT, presser 11:30 AM PT; TMUS Q3 ~1:05 PM PT, call 1:30 PM PT; FCC meeting Thu Oct 29.\n- Open note for Hal: Jeffrey is weighing whether Cash Money's trade-call/monitoring work is worth the compute, pending Cash Money's own assessment. Cash Money's levels are still in goal 001's success check, so job 1 stays queued unless Hal or Jeffrey changes the goal.\n- Rules reminded: no sending, posting, trading, or buying; outputs to outbox/ marked \"awaiting Jeffrey\"; max 40 tool calls per bot, $0 spend, P1 only after 80%; cite every claim; indicators on merit."
+    },
+    {
+     "heading": "11:05 PM Hal review",
+     "kind": "hal_review",
+     "time": "11:05 PM",
+     "body_times": [
+      "11:00 AM",
+      "1:05 PM",
+      "4:45 AM"
+     ],
+     "body": "- Approved all four jobs. Wednesday is event-heavy (FOMC 11:00 AM PT, TMUS ~1:05 PM PT per Grok Bot's plan; Compass confirms both).\n- Kept Cash Money's job: its levels are in goal 001's success check. Since Jeffrey is weighing whether this is worth the compute, Cash Money aims for 15 calls or fewer and reports how Tuesday's levels actually held or broke versus last night's sheet. That hit-rate check goes in the outbox file as evidence for his decision.\n- Capped SiteScout (P2) at 20 calls with no overlap with Compass; last night it used 28.\n- Hal's 4:45 AM routine picks up job 001-2026-10-27-4."
+    }
+   ],
+   "mtime": "2026-10-27 23:01:51 PT"
+  },
   {
    "date": "2026-10-26",
    "file": "runs/2026-10-26.md",
@@ -826,268 +535,60 @@
    "spend_values": [
     "0"
    ]
+  },
+  {
+   "date": "2026-10-27",
+   "jobs": 4,
+   "status": {
+    "queued": 4
+   },
+   "calls": {
+    "grok": null,
+    "hal": 0,
+    "cash": 0,
+    "compass": 0,
+    "scout": 0,
+    "check": null
+   },
+   "total_calls": 0,
+   "links": 0,
+   "run_file": "runs/2026-10-27.md",
+   "run_sections": 2,
+   "spend_values": null
   }
  ],
  "sources_index": {
-  "night": "2026-10-26",
-  "total_links": 62,
-  "source_entries": 68,
-  "unlinked_entries": 7,
+  "night": "2026-10-27",
+  "total_links": 0,
+  "source_entries": 10,
+  "unlinked_entries": 10,
   "per_job": [
    {
-    "id": "001-2026-10-26-1",
+    "id": "001-2026-10-27-1",
     "owner": "Cash Money",
-    "links": 13,
-    "entries": 15
+    "links": 0,
+    "entries": 2
    },
    {
-    "id": "001-2026-10-26-2",
+    "id": "001-2026-10-27-2",
     "owner": "Compass",
-    "links": 16,
-    "entries": 16
+    "links": 0,
+    "entries": 4
    },
    {
-    "id": "001-2026-10-26-4",
+    "id": "001-2026-10-27-4",
     "owner": "Hal",
-    "links": 4,
-    "entries": 7
+    "links": 0,
+    "entries": 1
    },
    {
-    "id": "001-2026-10-26-3",
+    "id": "001-2026-10-27-3",
     "owner": "SiteScout",
-    "links": 29,
-    "entries": 30
+    "links": 0,
+    "entries": 3
    }
   ],
-  "domains": [
-   {
-    "domain": "sec.gov",
-    "links": 8,
-    "owners": [
-     "Compass",
-     "Hal",
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "investing.com",
-    "links": 7,
-    "owners": [
-     "Cash Money",
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "x.com",
-    "links": 6,
-    "owners": [
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "query1.finance.yahoo.com",
-    "links": 5,
-    "owners": [
-     "Cash Money",
-     "Hal",
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "verizon.com",
-    "links": 5,
-    "owners": [
-     "Cash Money",
-     "Compass",
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "americantower.gcs-web.com",
-    "links": 3,
-    "owners": [
-     "Cash Money",
-     "Compass",
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "federalreserve.gov",
-    "links": 2,
-    "owners": [
-     "Compass"
-    ]
-   },
-   {
-    "domain": "insidetowers.com",
-    "links": 2,
-    "owners": [
-     "Cash Money",
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "investor.t-mobile.com",
-    "links": 2,
-    "owners": [
-     "Compass"
-    ]
-   },
-   {
-    "domain": "247wallst.com",
-    "links": 1,
-    "owners": [
-     "Cash Money"
-    ]
-   },
-   {
-    "domain": "bnamericas.com",
-    "links": 1,
-    "owners": [
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "capitalsnitch.com",
-    "links": 1,
-    "owners": [
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "cnbc.com",
-    "links": 1,
-    "owners": [
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "communicationsdaily.com",
-    "links": 1,
-    "owners": [
-     "Cash Money"
-    ]
-   },
-   {
-    "domain": "data.sec.gov",
-    "links": 1,
-    "owners": [
-     "Hal"
-    ]
-   },
-   {
-    "domain": "datacenterdynamics.com",
-    "links": 1,
-    "owners": [
-     "Cash Money"
-    ]
-   },
-   {
-    "domain": "docs.fcc.gov",
-    "links": 1,
-    "owners": [
-     "Compass"
-    ]
-   },
-   {
-    "domain": "etf.com",
-    "links": 1,
-    "owners": [
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "exa.ai",
-    "links": 1,
-    "owners": [
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "exame.com",
-    "links": 1,
-    "owners": [
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "fcc.gov",
-    "links": 1,
-    "owners": [
-     "Compass"
-    ]
-   },
-   {
-    "domain": "finance.yahoo.com",
-    "links": 1,
-    "owners": [
-     "Cash Money"
-    ]
-   },
-   {
-    "domain": "investor.crowncastle.com",
-    "links": 1,
-    "owners": [
-     "Compass"
-    ]
-   },
-   {
-    "domain": "ir.sbasite.com",
-    "links": 1,
-    "owners": [
-     "Compass"
-    ]
-   },
-   {
-    "domain": "protos.com",
-    "links": 1,
-    "owners": [
-     "Compass"
-    ]
-   },
-   {
-    "domain": "rcrwireless.com",
-    "links": 1,
-    "owners": [
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "riotimesonline.com",
-    "links": 1,
-    "owners": [
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "stockstory.org",
-    "links": 1,
-    "owners": [
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "thedesk.net",
-    "links": 1,
-    "owners": [
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "thenextweb.com",
-    "links": 1,
-    "owners": [
-     "SiteScout"
-    ]
-   },
-   {
-    "domain": "tipranks.com",
-    "links": 1,
-    "owners": [
-     "SiteScout"
-    ]
-   }
-  ]
+  "domains": []
  },
  "rules": [
   "Use whatever tools, data sources, indicators, and methods best fit each job, and note why. Never use something just because Jeffrey mentioned it.",
@@ -1109,28 +610,28 @@
   },
   {
    "bot": "Hal",
-   "calls": 12,
+   "calls": 0,
    "jobs": 1,
    "usd": null,
    "note": null
   },
   {
    "bot": "Cash Money",
-   "calls": 9,
+   "calls": 0,
    "jobs": 1,
    "usd": null,
    "note": null
   },
   {
    "bot": "Compass",
-   "calls": 23,
+   "calls": 0,
    "jobs": 1,
    "usd": null,
    "note": null
   },
   {
    "bot": "SiteScout",
-   "calls": 28,
+   "calls": 0,
    "jobs": 1,
    "usd": null,
    "note": null
@@ -1140,14 +641,8 @@
    "calls": null,
    "jobs": 0,
    "usd": null,
-   "note": "run log: about 6 shell checks (not a job file)"
+   "note": null
   }
  ],
- "team_spend": {
-  "values": [
-   "0"
-  ],
-  "source": "runs/2026-10-26.md",
-  "lines": 2
- }
+ "team_spend": null
 }
